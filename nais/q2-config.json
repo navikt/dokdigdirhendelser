@@ -1,0 +1,9 @@
+{
+  "APP_NAME": "dokdigdirhendelser",
+  "ENVIRONMENT": "q2",
+  "MIN_REPLICAS": "1",
+  "MAX_REPLICAS": "1",
+  "INGRESSES": [
+    "https://dokdigdirhendelser.intern.dev.nav.no"
+  ]
+}
