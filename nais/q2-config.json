@@ -1,9 +1,13 @@
 {
   "APP_NAME": "dokdigdirhendelser",
+  "KAFKA_POOL": "nav-dev",
+  "DOKDIGDIRHENDELSER_SECRET": "dokdigdirhendelser",
+  "DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE":"teamdokumenthandtering.privat-altinn-melding-hendelse",
   "ENVIRONMENT": "q2",
   "MIN_REPLICAS": "1",
   "MAX_REPLICAS": "1",
   "INGRESSES": [
+    "https://dokdigdirhendelser.ekstern.dev.nav.no",
     "https://dokdigdirhendelser.intern.dev.nav.no"
   ]
 }

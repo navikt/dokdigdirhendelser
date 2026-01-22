@@ -19,9 +19,16 @@
 
 	<properties>
 		<java.version>25</java.version>
+		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
+
 
 		<!-- plugins -->
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
+
+		<!-- test -->
+		<spring-cloud-starter-contract-stub-runner.version>5.0.1</spring-cloud-starter-contract-stub-runner.version>
+		<spring-cloud-contract-wiremock.version>4.3.0</spring-cloud-contract-wiremock.version>
+
 	</properties>
 
 	<dependencyManagement>
@@ -30,6 +37,23 @@
 				<groupId>no.nav.dokdigdirhendelser</groupId>
 				<artifactId>app</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.logstash.logback</groupId>
+				<artifactId>logstash-logback-encoder</artifactId>
+				<version>${logstash-logback-encoder.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+				<version>${spring-cloud-starter-contract-stub-runner.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-contract-wiremock</artifactId>
+				<version>${spring-cloud-contract-wiremock.version}</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -40,6 +64,19 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -61,9 +98,19 @@
 					</toolchains>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
 </project>
-
-
