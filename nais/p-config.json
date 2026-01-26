@@ -5,8 +5,5 @@
   "DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE":"teamdokumenthandtering.privat-altinn-melding-hendelse",
   "ENVIRONMENT": "p",
   "MIN_REPLICAS": "1",
-  "MAX_REPLICAS": "1",
-  "INGRESSES": [
-    "https://dokdigdirhendelser.nav.no"
-  ]
+  "MAX_REPLICAS": "1"
 }
