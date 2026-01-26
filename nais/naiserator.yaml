@@ -6,8 +6,6 @@ metadata:
   labels:
     team: teamdokumenthandtering
 spec:
-  kafka:
-    pool: {{KAFKA_POOL}}
   image: {{ image }}
   ingresses:
     {{#each INGRESSES}}
@@ -34,6 +32,8 @@ spec:
   prometheus:
     enabled: true
     path: /actuator/prometheus
+  kafka:
+    pool: {{ KAFKA_POOL }}
   replicas:
     min: {{ MIN_REPLICAS }}
     max: {{ MAX_REPLICAS }}

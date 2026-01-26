@@ -7,7 +7,6 @@
   "MIN_REPLICAS": "1",
   "MAX_REPLICAS": "1",
   "INGRESSES": [
-    "https://dokdigdirhendelser.ekstern.dev.nav.no",
-    "https://dokdigdirhendelser.intern.dev.nav.no"
+    "https://dokdigdirhendelser.ekstern.dev.nav.no"
   ]
 }
