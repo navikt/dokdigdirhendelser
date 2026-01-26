@@ -21,14 +21,8 @@
 		<java.version>25</java.version>
 		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
 
-
 		<!-- plugins -->
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
-
-		<!-- test -->
-		<spring-cloud-starter-contract-stub-runner.version>5.0.1</spring-cloud-starter-contract-stub-runner.version>
-		<spring-cloud-contract-wiremock.version>4.3.0</spring-cloud-contract-wiremock.version>
-
 	</properties>
 
 	<dependencyManagement>
@@ -43,21 +37,8 @@
 				<artifactId>logstash-logback-encoder</artifactId>
 				<version>${logstash-logback-encoder.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
-				<version>${spring-cloud-starter-contract-stub-runner.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-contract-wiremock</artifactId>
-				<version>${spring-cloud-contract-wiremock.version}</version>
-				<scope>test</scope>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 
 	<build>
 		<plugins>
@@ -112,5 +93,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

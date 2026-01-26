@@ -22,23 +22,11 @@ public class AltinnEventsController {
 
 	@PostMapping
 	public ResponseEntity<String> mottakAltinnMelding(@Valid @RequestBody AltinnEvents altinnEvents) {
+		log.info("Mottatt Altinn melding med id={}, resourceinstance={}, type={}",
+				altinnEvents.id(), altinnEvents.resourceinstance(), altinnEvents.type());
 
-		try {
-			altinnEventProducerService.validateAltinnEvent(altinnEvents);
-			log.info("Mottatt Altinn melding med id={}, resourceinstance={}, type={}",
-					altinnEvents.id(), altinnEvents.resourceinstance(), altinnEvents.type());
-
-			altinnEventProducerService.publish(altinnEvents);
-			return ResponseEntity.status(HttpStatus.OK).build();
-		} catch (IllegalArgumentException e) {
-			log.error("Ugyldig Altinn hendelser: {}", e.getMessage());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("Ugyldig hendelser: " + e.getMessage());
-		} catch (Exception e) {
-			log.error("Feil ved behandling av Altinn hendelser: {}", e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("Feil ved behandling av altinn hendelser: " + e.getMessage());
-		}
+		altinnEventProducerService.publish(altinnEvents);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 }

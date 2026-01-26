@@ -1,0 +1,98 @@
+package no.nav.dokdigdirhendelser.altinn.config;
+
+import no.nav.dokdigdirhendelser.altinn.AltinnEvents;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.web.servlet.client.RestTestClient;
+
+import java.time.Instant;
+
+import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_ALTERNATIVE_SUBJECT;
+import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_EVENTS_RESOURCE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
+class AltinnEventControllerIT extends AbstractIT {
+
+	private static final String EVENT_ID = "af0e7e0c-579c-4563-9398-10cdf031b80d";
+	private static final String EVENT_TYPE = "no.altinn.correspondence.correspondencereceiverread";
+	private static final String RESOURCE_INSTANCE = "af0e7e0c-579c-4563-9398-10cdf031b80A";
+	private static final String SUBJECT = "/organisation/50019855";
+	private static final String VERSION = "1.0";
+	private static final String TIME = Instant.now().toString();
+
+	@LocalServerPort
+	private int port;
+
+	private RestTestClient restTestClient;
+
+
+	@BeforeEach
+	void setup() {
+		this.restTestClient = RestTestClient.bindToServer()
+				.baseUrl("http://localhost:" + port)
+				.build();
+	}
+
+
+	@Test
+	void shouldReturnAltinnEvents() {
+		AltinnEvents validEvent = createValidAltinnEvent();
+
+		var response = restTestClient.post()
+				.uri("/rest/webhook/path")
+				.body(validEvent)
+				.exchange()
+				.expectStatus().isOk()
+				.returnResult();
+
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK);
+		AltinnEvents readFromAltinnEventsTopic = readFromAltinnEventsTopic();
+
+		assertThat(readFromAltinnEventsTopic.id()).isEqualTo(EVENT_ID);
+		assertThat(readFromAltinnEventsTopic.type()).isEqualTo(EVENT_TYPE);
+		assertThat(readFromAltinnEventsTopic.time()).isEqualTo(TIME);
+		assertThat(readFromAltinnEventsTopic.resource()).isEqualTo(ALTINN_EVENTS_RESOURCE);
+		assertThat(readFromAltinnEventsTopic.alternativesubject()).isEqualTo(ALTINN_ALTERNATIVE_SUBJECT);
+		assertThat(readFromAltinnEventsTopic.resourceinstance()).isEqualTo(RESOURCE_INSTANCE);
+		assertThat(readFromAltinnEventsTopic.subject()).isEqualTo(SUBJECT);
+		assertThat(readFromAltinnEventsTopic.specversion()).isEqualTo(VERSION);
+	}
+
+	@Test
+	void shouldReturnBadRequestForInvalidAltinnEvent() {
+		AltinnEvents invalidEvent = AltinnEvents.builder()
+				.id(EVENT_ID)
+				.type(EVENT_TYPE)
+				.time(TIME)
+				.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
+				.resourceinstance(RESOURCE_INSTANCE)
+				.subject(SUBJECT)
+				.specversion(VERSION)
+				.build();
+
+		var response = restTestClient.post()
+				.uri("/rest/webhook/path")
+				.body(invalidEvent)
+				.exchange()
+				.expectStatus().isBadRequest()
+				.returnResult();
+
+		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
+	}
+
+	private AltinnEvents createValidAltinnEvent() {
+		return AltinnEvents.builder()
+				.id(EVENT_ID)
+				.type(EVENT_TYPE)
+				.time(TIME)
+				.resource(ALTINN_EVENTS_RESOURCE)
+				.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
+				.resourceinstance(RESOURCE_INSTANCE)
+				.subject(SUBJECT)
+				.specversion(VERSION)
+				.build();
+	}
+}

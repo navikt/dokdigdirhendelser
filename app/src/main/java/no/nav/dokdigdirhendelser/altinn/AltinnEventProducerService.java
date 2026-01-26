@@ -9,9 +9,9 @@ import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_ALTERNATIVE_SUBJECT;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_EVENTS_RESOURCE;
@@ -19,7 +19,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 @Component
-@EnableTransactionManagement
 public class AltinnEventProducerService {
 
 	private static final String KAFKA_NOT_AUTHENTICATED = "Not authenticated to publish to topic: ";
@@ -34,7 +33,10 @@ public class AltinnEventProducerService {
 		this.topicsProperties = altinnProperties.topics();
 	}
 
+	@Transactional
 	public void publish(AltinnEvents altinnEvents) {
+		validateAltinnEvent(altinnEvents);
+		String topic = topicsProperties.altinnMeldingHendelse();
 		ProducerRecord<String, AltinnEvents> altinnEventsProducerRecord = new ProducerRecord<>(
 				topicsProperties.altinnMeldingHendelse(),
 				null,
@@ -43,21 +45,23 @@ public class AltinnEventProducerService {
 				altinnEvents
 		);
 
-		try {
-			SendResult<String, AltinnEvents> sendResult = kafkaTemplate.send(altinnEventsProducerRecord).get();
-			log.info("altinnEvent med (id={}, resourceinstance={}) skrevet til topic: {}. hendelseMetadata={}",
-					altinnEvents.id(), altinnEvents.resourceinstance(), topicsProperties.altinnMeldingHendelse(),
-					sendResult.getRecordMetadata()
-			);
-		} catch (ExecutionException executionException) {
-			if (executionException.getCause() instanceof KafkaProducerException kafkaProducerException && kafkaProducerException.getCause() instanceof TopicAuthorizationException) {
-				throw new KafkaTechnicalException(KAFKA_NOT_AUTHENTICATED + topicsProperties.altinnMeldingHendelse(), kafkaProducerException.getCause());
+		CompletableFuture<SendResult<String, AltinnEvents>> future = kafkaTemplate.send(altinnEventsProducerRecord);
+		future.whenComplete((result, ex) -> {
+			if (ex != null) {
+				handleKafkaError(topic, ex);
+			} else {
+				log.info("altinnEvent med (id={}, resourceinstance={}) skrevet til topic: {}. metadata={}",
+						altinnEvents.id(), altinnEvents.resourceinstance(), topic, result.getRecordMetadata());
 			}
-			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topicsProperties.altinnMeldingHendelse(), executionException);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topicsProperties.altinnMeldingHendelse(), e);
+		});
+	}
+
+	private void handleKafkaError(String topic, Throwable ex) {
+		if (ex.getCause() instanceof KafkaProducerException kpe
+				&& kpe.getCause() instanceof TopicAuthorizationException) {
+			throw new KafkaTechnicalException(KAFKA_NOT_AUTHENTICATED + topic, kpe.getCause());
 		}
+		throw new KafkaTechnicalException(KAFKA_FAILED_TO_SEND + topic, ex);
 	}
 
 	public void validateAltinnEvent(AltinnEvents altinnEvents) {
