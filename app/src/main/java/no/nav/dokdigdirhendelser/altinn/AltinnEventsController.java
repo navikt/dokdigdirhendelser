@@ -9,15 +9,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static no.nav.dokdigdirhendelser.altinn.eventvalidator.ValiderAltinnEvents.validerAltinnEvent;
+
 @Slf4j
 @RestController
 @RequestMapping("${altinn.webhook.path}")
 public class AltinnEventsController {
 
-	private final AltinnEventProducerService altinnEventProducerService;
+	private final AltinnMeldingHendelse altinnMeldingHendelse;
 
-	public AltinnEventsController(AltinnEventProducerService altinnEventProducerService) {
-		this.altinnEventProducerService = altinnEventProducerService;
+	public AltinnEventsController(AltinnMeldingHendelse altinnMeldingHendelse) {
+		this.altinnMeldingHendelse = altinnMeldingHendelse;
 	}
 
 	@PostMapping
@@ -25,7 +27,9 @@ public class AltinnEventsController {
 		log.info("Mottatt Altinn melding med id={}, resourceinstance={}, type={}",
 				altinnEvents.id(), altinnEvents.resourceinstance(), altinnEvents.type());
 
-		altinnEventProducerService.publish(altinnEvents);
+		validerAltinnEvent(altinnEvents);
+
+		altinnMeldingHendelse.publish(altinnEvents);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 

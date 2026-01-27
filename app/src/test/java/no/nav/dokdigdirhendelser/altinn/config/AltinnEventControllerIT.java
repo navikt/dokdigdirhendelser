@@ -1,18 +1,19 @@
 package no.nav.dokdigdirhendelser.altinn.config;
 
 import no.nav.dokdigdirhendelser.altinn.AltinnEvents;
+import no.nav.dokdigdirhendelser.altinn.EventType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
 import java.time.Instant;
 
+import static no.nav.dokdigdirhendelser.altinn.EventType.CORRESPONDENCE_RECEIVER_READ;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_ALTERNATIVE_SUBJECT;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_EVENTS_RESOURCE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 
 class AltinnEventControllerIT extends AbstractIT {
 
@@ -48,7 +49,7 @@ class AltinnEventControllerIT extends AbstractIT {
 				.expectStatus().isOk()
 				.returnResult();
 
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK);
+		assertThat(response.getStatus()).isEqualTo(OK);
 		AltinnEvents readFromAltinnEventsTopic = readFromAltinnEventsTopic();
 
 		assertThat(readFromAltinnEventsTopic.id()).isEqualTo(EVENT_ID);
@@ -62,10 +63,10 @@ class AltinnEventControllerIT extends AbstractIT {
 	}
 
 	@Test
-	void shouldReturnBadRequestForInvalidAltinnEvent() {
+	void shouldReturnOKWhenAltinnEventRequestenAreInvalid() {
 		AltinnEvents invalidEvent = AltinnEvents.builder()
 				.id(EVENT_ID)
-				.type(EVENT_TYPE)
+				.type(EventType.CORRESPONDENCE_RECEIVER_CONFIRMED.name())
 				.time(TIME)
 				.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
 				.resourceinstance(RESOURCE_INSTANCE)
@@ -77,16 +78,16 @@ class AltinnEventControllerIT extends AbstractIT {
 				.uri("/rest/webhook/path")
 				.body(invalidEvent)
 				.exchange()
-				.expectStatus().isBadRequest()
+				.expectStatus().isOk()
 				.returnResult();
 
-		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
+		assertThat(response.getStatus()).isEqualTo(OK);
 	}
 
 	private AltinnEvents createValidAltinnEvent() {
 		return AltinnEvents.builder()
 				.id(EVENT_ID)
-				.type(EVENT_TYPE)
+				.type(CORRESPONDENCE_RECEIVER_READ.getValue())
 				.time(TIME)
 				.resource(ALTINN_EVENTS_RESOURCE)
 				.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)

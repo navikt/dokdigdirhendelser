@@ -1,4 +1,4 @@
-# Dokdigdirhenvendelser
+# dokdigdirhendelser
 Dokdigdirhenvendelser tar imot hendelser publisert av Altinn Event, og videreformidle disse internt via kafka-topic teamdokumenthandtering.privat-altinn-melding-hendelse. Interne tjenester som skal behandle hendelsene lytter på kafka topicen.
 
 Hendelsene blir publiserte til følgende Kafka-topic:

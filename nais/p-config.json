@@ -4,6 +4,6 @@
   "DOKDIGDIRHENDELSER_SECRET": "dokdigdirhendelser",
   "DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE":"teamdokumenthandtering.privat-altinn-melding-hendelse",
   "ENVIRONMENT": "p",
-  "MIN_REPLICAS": "1",
-  "MAX_REPLICAS": "1"
+  "MIN_REPLICAS": "3",
+  "MAX_REPLICAS": "6"
 }

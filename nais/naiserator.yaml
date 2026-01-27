@@ -44,6 +44,9 @@ spec:
     requests:
       cpu: 20m
   observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
     logging:
       destinations:
         - id: elastic
