@@ -20,7 +20,7 @@ class AltinnEventControllerIT extends AbstractIT {
 	private static final String EVENT_ID = "af0e7e0c-579c-4563-9398-10cdf031b80d";
 	private static final String EVENT_TYPE = "no.altinn.correspondence.correspondencereceiverread";
 	private static final String RESOURCE_INSTANCE = "af0e7e0c-579c-4563-9398-10cdf031b80A";
-	private static final String SUBJECT = "/organisation/50019855";
+	private static final String EVENT_SOURCE = "https://ttd.apps.altinn.no/ttd/apps-test/instances/50015641/a72223a3-926b-4095-a2a6-bacc10815f2d";
 	private static final String VERSION = "1.0";
 	private static final String TIME = Instant.now().toString();
 
@@ -58,7 +58,7 @@ class AltinnEventControllerIT extends AbstractIT {
 		assertThat(readFromAltinnEventsTopic.resource()).isEqualTo(ALTINN_EVENTS_RESOURCE);
 		assertThat(readFromAltinnEventsTopic.alternativesubject()).isEqualTo(ALTINN_ALTERNATIVE_SUBJECT);
 		assertThat(readFromAltinnEventsTopic.resourceinstance()).isEqualTo(RESOURCE_INSTANCE);
-		assertThat(readFromAltinnEventsTopic.subject()).isEqualTo(SUBJECT);
+		assertThat(readFromAltinnEventsTopic.source()).isEqualTo(EVENT_SOURCE);
 		assertThat(readFromAltinnEventsTopic.specversion()).isEqualTo(VERSION);
 	}
 
@@ -70,7 +70,6 @@ class AltinnEventControllerIT extends AbstractIT {
 				.time(TIME)
 				.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
 				.resourceinstance(RESOURCE_INSTANCE)
-				.subject(SUBJECT)
 				.specversion(VERSION)
 				.build();
 
@@ -92,7 +91,7 @@ class AltinnEventControllerIT extends AbstractIT {
 				.resource(ALTINN_EVENTS_RESOURCE)
 				.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
 				.resourceinstance(RESOURCE_INSTANCE)
-				.subject(SUBJECT)
+				.source(EVENT_SOURCE)
 				.specversion(VERSION)
 				.build();
 	}

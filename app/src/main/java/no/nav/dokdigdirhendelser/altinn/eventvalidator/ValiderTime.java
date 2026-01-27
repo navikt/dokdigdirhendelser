@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValiderTime {
 
-	String message() default "Forsendelsesmetadata og ForsendelsesmetadataType må enten begge være satt, eller begge være null.";
+	String message() default "Time må være gyldig ISO 8601 tid.";
 
 	Class<?>[] groups() default {};
 

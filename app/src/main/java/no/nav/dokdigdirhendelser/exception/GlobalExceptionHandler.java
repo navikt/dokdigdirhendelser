@@ -17,8 +17,15 @@ public class GlobalExceptionHandler {
 	private static final String VALIDERINGSFEIL = "Valideringfeil: {}";
 
 	@ResponseStatus(OK)
-	@ExceptionHandler({MethodArgumentNotValidException.class, IllegalArgumentException.class})
+	@ExceptionHandler({MethodArgumentNotValidException.class})
 	public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
+		log.error(VALIDERINGSFEIL, ex.getMessage());
+		return ResponseEntity.status(OK).body(ex.getMessage());
+	}
+
+	@ResponseStatus(OK)
+	@ExceptionHandler({IllegalArgumentException.class})
+	public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
 		log.error(VALIDERINGSFEIL, ex.getMessage());
 		return ResponseEntity.status(OK).body(ex.getMessage());
 	}
