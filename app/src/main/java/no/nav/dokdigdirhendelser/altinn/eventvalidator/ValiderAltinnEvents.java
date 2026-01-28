@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdigdirhendelser.altinn.AltinnEvents;
 
 import static java.lang.String.format;
-import static no.nav.dokdigdirhendelser.altinn.EventType.isValid;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEvents.ALTINN_EVENT_TYPES;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_EVENTS_RESOURCE;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.SPEC_VERSION;
 
@@ -17,7 +17,7 @@ public class ValiderAltinnEvents {
 			throw new IllegalArgumentException("Ugyldig verdi: resource er ikke lik " + ALTINN_EVENTS_RESOURCE);
 		}
 
-		if (!isValid(altinnEvents.type())) {
+		if (!ALTINN_EVENT_TYPES.contains(altinnEvents.type())) {
 			log.error("Ugyldig type: med resourceinstance={} og type={}", altinnEvents.resourceinstance(), altinnEvents.type());
 			throw new IllegalArgumentException(format("%s er ugyldig Altinn event type", altinnEvents.type()));
 		}

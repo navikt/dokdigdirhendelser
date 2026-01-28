@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.restclient.test.autoconfigure.AutoConfigureRestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
@@ -32,12 +31,10 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 		partitions = 1,
 		controlledShutdown = true
 )
-@AutoConfigureRestClient
 @ActiveProfiles("itest")
 public class AbstractIT {
 
 	protected static final String PRIVAT_ALTINN_MELDING_TOPIC = "altinn-melding-hendelse";
-
 
 	@Autowired
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
