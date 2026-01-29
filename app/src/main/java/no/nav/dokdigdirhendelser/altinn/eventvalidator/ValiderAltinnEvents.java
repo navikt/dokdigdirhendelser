@@ -13,21 +13,18 @@ public class ValiderAltinnEvents {
 
 	public static void validerAltinnEvent(AltinnEvents altinnEvents) {
 		if (altinnEvents == null) {
-			throw new IllegalArgumentException("AltinnEvents kan ikke være null");
+			throw new IllegalArgumentException("altinnEvents kan ikke være null");
 		}
 
 		if (!ALTINN_EVENTS_RESOURCE.equals(altinnEvents.resource())) {
-			log.error("Ugyldig resource: med resourceinstance={} og type={}", altinnEvents.resourceinstance(), altinnEvents.type());
 			throw new IllegalArgumentException("Ugyldig verdi: resource er ikke lik " + ALTINN_EVENTS_RESOURCE);
 		}
 
 		if (!ALTINN_EVENT_TYPES.contains(altinnEvents.type())) {
-			log.error("Ugyldig type: med resourceinstance={} og type={}", altinnEvents.resourceinstance(), altinnEvents.type());
-			throw new IllegalArgumentException(format("%s er ugyldig Altinn event type", altinnEvents.type()));
+			throw new IllegalArgumentException(format("Ugyldig verdi: \"%s\"er ugyldig event type", altinnEvents.type()));
 		}
 
 		if (!SPEC_VERSION.equals(altinnEvents.specversion())) {
-			log.error("Ugyldig specversion og må være 1.0 med resourceinstance={} og type={}", altinnEvents.resourceinstance(), altinnEvents.type());
 			throw new IllegalArgumentException("Ugyldig verdi: specversion må være 1.0");
 		}
 	}
