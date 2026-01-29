@@ -12,6 +12,10 @@ import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.SPEC_V
 public class ValiderAltinnEvents {
 
 	public static void validerAltinnEvent(AltinnEvents altinnEvents) {
+		if (altinnEvents == null) {
+			throw new IllegalArgumentException("AltinnEvents kan ikke være null");
+		}
+
 		if (!ALTINN_EVENTS_RESOURCE.equals(altinnEvents.resource())) {
 			log.error("Ugyldig resource: med resourceinstance={} og type={}", altinnEvents.resourceinstance(), altinnEvents.type());
 			throw new IllegalArgumentException("Ugyldig verdi: resource er ikke lik " + ALTINN_EVENTS_RESOURCE);

@@ -1,7 +1,7 @@
 package no.nav.dokdigdirhendelser.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -14,26 +14,24 @@ import static org.springframework.http.HttpStatus.OK;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	private static final String VALIDERINGSFEIL = "Valideringfeil: {}";
-
 	@ResponseStatus(OK)
 	@ExceptionHandler({MethodArgumentNotValidException.class})
-	public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
-		log.error(VALIDERINGSFEIL, ex.getMessage());
-		return ResponseEntity.status(OK).body(ex.getMessage());
+	public ProblemDetail handleValidationException(MethodArgumentNotValidException ex) {
+		return ProblemDetail.forStatus(OK);
 	}
 
 	@ResponseStatus(OK)
 	@ExceptionHandler({IllegalArgumentException.class})
-	public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-		log.error(VALIDERINGSFEIL, ex.getMessage());
-		return ResponseEntity.status(OK).body(ex.getMessage());
+	public ProblemDetail handleIllegalArgumentException(IllegalArgumentException ex) {
+		return ProblemDetail.forStatus(OK);
 	}
 
 	@ResponseStatus(INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<String> handleGenericException(Exception ex) {
-		return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(ex.getMessage());
+	public ProblemDetail handleGenericException(Exception ex) {
+		return ProblemDetail.forStatusAndDetail(
+				INTERNAL_SERVER_ERROR,
+				"Feilet teknisk: " + ex.getMessage()
+		);
 	}
-
 }
