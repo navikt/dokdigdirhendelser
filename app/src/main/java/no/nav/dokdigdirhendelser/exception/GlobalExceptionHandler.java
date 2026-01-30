@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
 	@ResponseStatus(OK)
 	@ExceptionHandler({IllegalArgumentException.class, HttpMessageNotReadableException.class,
 			InvalidFormatException.class})
-	public ProblemDetail handleIllegalArgumentException(IllegalArgumentException ex) {
+	public ProblemDetail handleIllegalArgumentException(Exception ex) {
 		log.error(ex.getMessage());
 		return ProblemDetail.forStatus(OK);
 	}
