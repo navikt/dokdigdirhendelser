@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import tools.jackson.databind.exc.InvalidFormatException;
 
 import java.util.stream.Collectors;
 
@@ -34,7 +35,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ResponseStatus(OK)
-	@ExceptionHandler({IllegalArgumentException.class})
+	@ExceptionHandler({IllegalArgumentException.class, InvalidFormatException.class})
 	public ProblemDetail handleIllegalArgumentException(IllegalArgumentException ex) {
 		log.error(ex.getMessage());
 		return ProblemDetail.forStatus(OK);
