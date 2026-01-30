@@ -36,7 +36,7 @@ public class AltinnMeldingHendelse {
 				topicsProperties.altinnMeldingHendelse(),
 				null,
 				System.currentTimeMillis(),
-				altinnEvents.id(),
+				altinnEvents.id().toString(),
 				altinnEvents
 		);
 
