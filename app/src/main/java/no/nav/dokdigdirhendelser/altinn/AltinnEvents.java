@@ -1,26 +1,25 @@
 package no.nav.dokdigdirhendelser.altinn;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
-import no.nav.dokdigdirhendelser.altinn.eventvalidator.ValiderTime;
 
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.Set;
-
-import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.UUID_REGEX;
+import java.util.UUID;
 
 @Builder
-@ValiderTime
 public record AltinnEvents(
-		@NotBlank(message = "id kan ikke være tom")
-		@Pattern(regexp = UUID_REGEX, message = "id kan være en UUID type")
-		String id,
+		@NotNull(message = "id kan ikke være null og må være en gyldig UUID.")
+		UUID id,
 		@NotBlank(message = "resource kan ikke være tom")
 		String resource,
-		@Pattern(regexp = UUID_REGEX, message = "resourceinstance kan være en UUID type")
-		String resourceinstance,
-		@NotBlank(message = "source kan være en gyldig URI type")
-		String source,
+		@NotNull(message = "resourceinstance kan ikke være null og må være en gyldig UUID.")
+		UUID resourceinstance,
+		@NotNull(message = "source kan ikke være null og må være en gyldig URI type")
+		URI source,
 		@NotBlank(message = "specversion kan ikke være tom")
 		String specversion,
 		@NotBlank(message = "type kan ikke være tom")
@@ -29,7 +28,8 @@ public record AltinnEvents(
 		@NotBlank(message = "alternativesubject kan ikke være tom")
 		@Pattern(regexp = "^/organisation/\\d{9}$", message = "alternativesubject må være på formatet /organisation/{9 siffer}")
 		String alternativesubject,
-		String time) {
+		@NotNull(message = "time kan ikke være null")
+		OffsetDateTime time) {
 
 	public static final Set<String> ALTINN_EVENT_TYPES = Set.of("no.altinn.correspondence.attachmentinitialized",
 			"no.altinn.correspondence.attachmentuploadprocessing",
