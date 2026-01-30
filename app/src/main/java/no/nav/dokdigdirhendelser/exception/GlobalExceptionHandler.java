@@ -2,6 +2,7 @@ package no.nav.dokdigdirhendelser.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,7 +36,8 @@ public class GlobalExceptionHandler {
 	}
 
 	@ResponseStatus(OK)
-	@ExceptionHandler({IllegalArgumentException.class, InvalidFormatException.class})
+	@ExceptionHandler({IllegalArgumentException.class, HttpMessageNotReadableException.class,
+			InvalidFormatException.class})
 	public ProblemDetail handleIllegalArgumentException(IllegalArgumentException ex) {
 		log.error(ex.getMessage());
 		return ProblemDetail.forStatus(OK);
