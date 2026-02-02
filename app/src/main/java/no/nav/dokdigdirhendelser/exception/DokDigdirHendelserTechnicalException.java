@@ -4,4 +4,8 @@ public class DokDigdirHendelserTechnicalException extends RuntimeException {
 	public DokDigdirHendelserTechnicalException(String message, Throwable cause) {
 		super(message, cause);
 	}
+
+	public DokDigdirHendelserTechnicalException(String message) {
+		super(message);
+	}
 }

@@ -31,11 +31,9 @@ public class AltinnMeldingHendelse {
 	}
 
 	public void publish(AltinnEvents altinnEvents) {
-		String topic = topicsProperties.altinnMeldingHendelse();
+		final String topic = topicsProperties.altinnMeldingHendelse();
 		ProducerRecord<String, AltinnEvents> altinnEventsProducerRecord = new ProducerRecord<>(
 				topicsProperties.altinnMeldingHendelse(),
-				null,
-				System.currentTimeMillis(),
 				altinnEvents.id().toString(),
 				altinnEvents
 		);

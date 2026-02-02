@@ -2,6 +2,7 @@ package no.nav.dokdigdirhendelser.altinn.eventvalidator;
 
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdigdirhendelser.altinn.AltinnEvents;
+import no.nav.dokdigdirhendelser.exception.DokDigdirHendelserTechnicalException;
 
 import static java.lang.String.format;
 import static no.nav.dokdigdirhendelser.altinn.AltinnEvents.ALTINN_EVENT_TYPES;
@@ -25,7 +26,7 @@ public class ValiderAltinnEvents {
 		}
 
 		if (!SPEC_VERSION.equals(altinnEvents.specversion())) {
-			throw new IllegalArgumentException("Ugyldig verdi: specversion må være 1.0");
+			throw new DokDigdirHendelserTechnicalException("Ugyldig verdi: specversion må være 1.0");
 		}
 	}
 

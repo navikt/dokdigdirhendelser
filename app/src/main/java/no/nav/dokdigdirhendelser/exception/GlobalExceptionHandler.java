@@ -44,9 +44,9 @@ public class GlobalExceptionHandler {
 	}
 
 	@ResponseStatus(INTERNAL_SERVER_ERROR)
-	@ExceptionHandler(Exception.class)
+	@ExceptionHandler({DokDigdirHendelserTechnicalException.class, Exception.class})
 	public ProblemDetail handleGenericException(Exception ex) {
-		log.error("Feilet teknisk: " + ex.getMessage(), ex);
+		log.error("Feilet teknisk:{}", ex.getMessage(), ex);
 		return ProblemDetail.forStatusAndDetail(
 				INTERNAL_SERVER_ERROR,
 				"Feilet teknisk: " + ex.getMessage()
