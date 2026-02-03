@@ -19,6 +19,7 @@ spec:
               -Djavax.net.ssl.trustStorePassword=$(NAV_TRUSTSTORE_PASSWORD)"
     - name: JDK_JAVA_OPTIONS
       value: "-XX:MaxRAMPercentage=75
+              --enable-native-access=ALL-UNNAMED
               $(JAVA_TRUSTSTORE_OPTIONS)"
     - name: DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE
       value: {{ DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE }}
