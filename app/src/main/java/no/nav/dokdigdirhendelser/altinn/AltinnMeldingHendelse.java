@@ -40,8 +40,8 @@ public class AltinnMeldingHendelse {
 					if (ex != null) {
 						handleKafkaError(topic, ex);
 					} else {
-						log.info("altinnEvent med (id={}, resourceinstance={}) skrevet til topic: {}. metadata={}",
-								altinnEvents.id(), altinnEvents.resourceinstance(), topic, result.getRecordMetadata());
+						log.info("altinnEvent med (id={}, resourceinstance={}) skrevet til topic: {}.",
+								altinnEvents.id(), altinnEvents.resourceinstance(), topic);
 					}
 				});
 	}
