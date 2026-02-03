@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static no.nav.dokdigdirhendelser.altinn.eventvalidator.ValiderAltinnEvents.validerAltinnEvent;
+import static no.nav.dokdigdirhendelser.altinn.eventvalidator.AltinnEventValidator.validerAltinnEvent;
 
 @Slf4j
 @RestController

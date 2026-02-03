@@ -10,7 +10,7 @@ import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.SPEC_VERSION;
 
 @Slf4j
-public class ValiderAltinnEvents {
+public class AltinnEventValidator {
 
 	public static void validerAltinnEvent(AltinnEvents altinnEvents) {
 		if (altinnEvents == null) {
@@ -30,6 +30,6 @@ public class ValiderAltinnEvents {
 		}
 	}
 
-	private ValiderAltinnEvents() {
+	private AltinnEventValidator() {
 	}
 }
