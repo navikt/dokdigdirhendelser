@@ -7,11 +7,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.springframework.kafka.core.KafkaProducerException;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
@@ -38,15 +35,15 @@ public class AltinnMeldingHendelse {
 				altinnEvents
 		);
 
-		CompletableFuture<SendResult<String, AltinnEvents>> future = kafkaTemplate.send(altinnEventsProducerRecord);
-		future.whenComplete((result, ex) -> {
-			if (ex != null) {
-				handleKafkaError(topic, ex);
-			} else {
-				log.info("altinnEvent med (id={}, resourceinstance={}) skrevet til topic: {}. metadata={}",
-						altinnEvents.id(), altinnEvents.resourceinstance(), topic, result.getRecordMetadata());
-			}
-		});
+		kafkaTemplate.send(altinnEventsProducerRecord)
+				.whenComplete((result, ex) -> {
+					if (ex != null) {
+						handleKafkaError(topic, ex);
+					} else {
+						log.info("altinnEvent med (id={}, resourceinstance={}) skrevet til topic: {}. metadata={}",
+								altinnEvents.id(), altinnEvents.resourceinstance(), topic, result.getRecordMetadata());
+					}
+				});
 	}
 
 	private void handleKafkaError(String topic, Throwable ex) {
