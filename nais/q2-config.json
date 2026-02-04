@@ -3,7 +3,7 @@
   "KAFKA_POOL": "nav-dev",
   "DOKDIGDIRHENDELSER_SECRET": "dokdigdirhendelser",
   "DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE":"teamdokumenthandtering.privat-altinn-melding-hendelse",
-  "ENVIRONMENT": "q2",
+  "ENVIRONMENT": "dev-gcp",
   "MIN_REPLICAS": "3",
   "MAX_REPLICAS": "6",
   "INGRESSES": [

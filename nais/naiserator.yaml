@@ -23,6 +23,8 @@ spec:
               $(JAVA_TRUSTSTORE_OPTIONS)"
     - name: DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE
       value: {{ DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE }}
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: "deployment.environment.name={{ ENVIRONMENT }}"
   liveness:
     path: /actuator/health/liveness
     initialDelay: 20
@@ -40,10 +42,11 @@ spec:
     max: {{ MAX_REPLICAS }}
     cpuThresholdPercentage: 50
   resources:
-    limits:
-      memory: 512Mi
     requests:
-      cpu: 20m
+      cpu: 30m
+      memory: 512Mi
+    limits:
+      memory: 1024Mi
   observability:
     autoInstrumentation:
       enabled: true
