@@ -18,7 +18,9 @@ import java.util.stream.Stream;
 
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_ALTERNATIVE_SUBJECT;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_EVENTS_RESOURCE;
+import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.SPEC_VERSION;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 
 class AltinnEventControllerIT extends AbstractIT {
@@ -31,6 +33,10 @@ class AltinnEventControllerIT extends AbstractIT {
 	private static final OffsetDateTime TIME = OffsetDateTime.now();
 
 	private static final String INVALID_EVENT_TYPE = "invalid.event.type";
+	private static final String INVALID_VERSION = "2.0";
+	private static final String INVALID_ALTINN_EVENTS_RESOURCE = "urn:altinn:resource:";
+	private static final String INVALID_ALTINN_ALTERNATIVE_SUBJECT = "/organisation/889640798";
+
 
 	@LocalServerPort
 	private int port;
@@ -46,7 +52,7 @@ class AltinnEventControllerIT extends AbstractIT {
 
 	@Test
 	void shouldReturnAltinnEvents() {
-		AltinnEvents altinnEvent = createValidAltinnEvent();
+		AltinnEvents altinnEvent = createValidAltinnEvent(SPEC_VERSION);
 
 		var response = restTestClient.post()
 				.uri("/rest/webhook/path")
@@ -87,9 +93,27 @@ class AltinnEventControllerIT extends AbstractIT {
 		assertThat(altinnEventReadFromTopic).isNull();
 	}
 
+	@Test
+	void shoudThrowInternalServerErrorWhenSpecversionAreInvalid() {
+		AltinnEvents altinnEvent = createValidAltinnEvent(INVALID_VERSION);
+
+		var response = restTestClient.post()
+				.uri("/rest/webhook/path")
+				.body(altinnEvent)
+				.exchange()
+				.expectStatus().is5xxServerError()
+				.returnResult();
+
+		assertThat(response.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
+
+		AltinnEvents altinnEventReadFromTopic = readFromAltinnEventsTopic();
+		assertThat(altinnEventReadFromTopic).isNull();
+	}
+
 	private static Stream<Arguments> shouldReturnOKWhenAltinnEventRequestenAreInvalid() {
 		return Stream.of(
 				Arguments.of(
+						//invalid id
 						AltinnEvents.builder()
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
@@ -99,16 +123,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.source(EVENT_SOURCE)
 								.specversion(VERSION)
 								.build()),
-				Arguments.of(
-						AltinnEvents.builder()
-								.id(EVENT_ID)
-								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
-								.time(TIME)
-								.resource(ALTINN_EVENTS_RESOURCE)
-								.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
-								.source(EVENT_SOURCE)
-								.specversion(VERSION)
-								.build()),
+				//invalid type
 				Arguments.of(
 						AltinnEvents.builder()
 								.id(EVENT_ID)
@@ -119,11 +134,68 @@ class AltinnEventControllerIT extends AbstractIT {
 								.resourceinstance(RESOURCE_INSTANCE)
 								.source(EVENT_SOURCE)
 								.specversion(VERSION)
+								.build()),
+				//invalid time
+				Arguments.of(
+						AltinnEvents.builder()
+								.id(EVENT_ID)
+								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
+								.resource(ALTINN_EVENTS_RESOURCE)
+								.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
+								.resourceinstance(RESOURCE_INSTANCE)
+								.source(EVENT_SOURCE)
+								.specversion(SPEC_VERSION)
+								.build()),
+				//invalid resource
+				Arguments.of(
+						AltinnEvents.builder()
+								.id(EVENT_ID)
+								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
+								.time(TIME)
+								.resource(INVALID_ALTINN_EVENTS_RESOURCE)
+								.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
+								.resourceinstance(RESOURCE_INSTANCE)
+								.source(EVENT_SOURCE)
+								.specversion(SPEC_VERSION)
+								.build()),
+				//invalid alternativesubject
+				Arguments.of(
+						AltinnEvents.builder()
+								.id(EVENT_ID)
+								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
+								.time(TIME)
+								.resource(INVALID_ALTINN_EVENTS_RESOURCE)
+								.alternativesubject(INVALID_ALTINN_ALTERNATIVE_SUBJECT)
+								.resourceinstance(RESOURCE_INSTANCE)
+								.source(EVENT_SOURCE)
+								.specversion(SPEC_VERSION)
+								.build()),
+				//invalid resourceinstance
+				Arguments.of(
+						AltinnEvents.builder()
+								.id(EVENT_ID)
+								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
+								.time(TIME)
+								.resource(ALTINN_EVENTS_RESOURCE)
+								.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
+								.source(EVENT_SOURCE)
+								.specversion(VERSION)
+								.build()),
+				//invalid source
+				Arguments.of(
+						AltinnEvents.builder()
+								.id(EVENT_ID)
+								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
+								.time(TIME)
+								.resource(ALTINN_EVENTS_RESOURCE)
+								.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
+								.resourceinstance(RESOURCE_INSTANCE)
+								.specversion(VERSION)
 								.build())
 		);
 	}
 
-	private AltinnEvents createValidAltinnEvent() {
+	private AltinnEvents createValidAltinnEvent(String specVersion) {
 		return AltinnEvents.builder()
 				.id(EVENT_ID)
 				.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
@@ -132,7 +204,7 @@ class AltinnEventControllerIT extends AbstractIT {
 				.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
 				.resourceinstance(RESOURCE_INSTANCE)
 				.source(EVENT_SOURCE)
-				.specversion(VERSION)
+				.specversion(specVersion)
 				.build();
 	}
 
