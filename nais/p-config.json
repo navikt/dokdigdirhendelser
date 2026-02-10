@@ -1,9 +1,9 @@
 {
   "APP_NAME": "dokdigdirhendelser",
-  "ENVIRONMENT": "p",
-  "MIN_REPLICAS": "1",
-  "MAX_REPLICAS": "1",
-  "INGRESSES": [
-    "https://dokdigdirhendelser.intern.dev.nav.no"
-  ]
+  "KAFKA_POOL": "nav-prod",
+  "DOKDIGDIRHENDELSER_SECRET": "dokdigdirhendelser",
+  "DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE":"teamdokumenthandtering.privat-altinn-melding-hendelse",
+  "ENVIRONMENT": "prod-gcp",
+  "MIN_REPLICAS": "3",
+  "MAX_REPLICAS": "6"
 }
