@@ -21,7 +21,7 @@ public class AltinnAbonnementScheduler {
 		this.altinnSubscriptionService = altinnSubscriptionService;
 	}
 
-	@Scheduled(cron = "${dokdigdirhendelser.subscription.scheduler}")
+	@Scheduled(cron = "${dokdigdirhendelser.subscription.scheduler:0 30 14 * * ?}", zone = "Europe/Oslo")
 	public void subscribe() {
 		if (leaderElectionConsumer.isLeader() && abonnementProperties.enabled()) {
 			AltinnAbonnementResponse altinnAbonnementResponse = altinnSubscriptionService.abonnerAltinnEvent();
