@@ -18,7 +18,7 @@ public class AltinnAbonnementScheduler {
 	}
 
 
-	@Scheduled(cron = "${dokdigdirhendelser.subscription.scheduler:0 20 12 16 2 ?}")
+	@Scheduled(cron = "${dokdigdirhendelser.subscription.scheduler:0 30 12 16 2 ?}")
 	public void subscribe() {
 		if (leaderElectionConsumer.isLeader()) {
 			AltinnAbonnementResponse altinnAbonnementResponse = altinnSubscriptionService.abonnerAltinnEvent();
