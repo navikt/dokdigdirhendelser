@@ -25,6 +25,7 @@ public record DokDigdirHendelserProperties(
 			@NotBlank
 			String endPoint,
 			@NotBlank
-			String sourceFilter) {
+			String sourceFilter,
+			boolean enabled) {
 	}
 }
