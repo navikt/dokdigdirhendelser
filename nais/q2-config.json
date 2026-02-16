@@ -3,6 +3,8 @@
   "KAFKA_POOL": "nav-dev",
   "DOKDIGDIRHENDELSER_SECRET": "dokdigdirhendelser",
   "DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE":"teamdokumenthandtering.privat-altinn-melding-hendelse",
+  "DOKDIGDIRHENDELSER_ALTINN_URL": "https://platform.tt02.altinn.no",
+  "DOKDIGDIRHENDELSER_SUBSCRIPTION_SOURCE_FILTER": "https://platform.tt02.altinn.no/correspondence/api/v1/correspondence",
   "ENVIRONMENT": "dev-gcp",
   "MIN_REPLICAS": "3",
   "MAX_REPLICAS": "6",
