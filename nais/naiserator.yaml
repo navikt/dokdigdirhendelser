@@ -23,8 +23,15 @@ spec:
               $(JAVA_TRUSTSTORE_OPTIONS)"
     - name: DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE
       value: {{ DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE }}
+    - name: DOKDIGDIRHENDELSER_ALTINN_URL
+      value: {{ DOKDIGDIRHENDELSER_ALTINN_URL }}
+    - name: DOKDIGDIRHENDELSER_SUBSCRIPTION_SOURCE_FILTER
+      value: {{ DOKDIGDIRHENDELSER_SUBSCRIPTION_SOURCE_FILTER }}
+    - name: DOKDIGDIRHENDELSER_SUBSCRIPTION_SCHEDULER
+      value: {{ DOKDIGDIRHENDELSER_SUBSCRIPTION_SCHEDULER }}
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: "deployment.environment.name={{ ENVIRONMENT }}"
+  leaderElection: true
   liveness:
     path: /actuator/health/liveness
     initialDelay: 20
@@ -55,3 +62,9 @@ spec:
       destinations:
         - id: elastic
         - id: loki
+  maskinporten:
+    enabled: true
+    scopes:
+      consumes:
+        - name: altinn:events.subscribe
+        - name: altinn:serviceowner
