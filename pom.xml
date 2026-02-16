@@ -19,7 +19,6 @@
 
 	<properties>
 		<java.version>25</java.version>
-		<nimbus-jose-jwt.version>10.7</nimbus-jose-jwt.version>
 		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
 
 		<!-- plugins -->
@@ -37,11 +36,6 @@
 				<groupId>net.logstash.logback</groupId>
 				<artifactId>logstash-logback-encoder</artifactId>
 				<version>${logstash-logback-encoder.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.nimbusds</groupId>
-				<artifactId>nimbus-jose-jwt</artifactId>
-				<version>${nimbus-jose-jwt.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
