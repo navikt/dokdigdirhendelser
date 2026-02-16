@@ -21,7 +21,6 @@ public class AltinnAbonnementScheduler {
 		this.altinnSubscriptionService = altinnSubscriptionService;
 	}
 
-
 	@Scheduled(cron = "${dokdigdirhendelser.subscription.scheduler}")
 	public void subscribe() {
 		if (leaderElectionConsumer.isLeader() && abonnementProperties.enabled()) {
