@@ -1,5 +1,7 @@
 # dokdigdirhendelser
-Dokdigdirhenvendelser tar imot hendelser publisert av Altinn Event, og videreformidle disse internt via kafka-topic teamdokumenthandtering.privat-altinn-melding-hendelse. Interne tjenester som skal behandle hendelsene lytter på kafka topicen.
+Dokdigdirhendelser tar imot hendelser publisert av Altinn Event, og videreformidle disse internt via kafka-topic teamdokumenthandtering.privat-altinn-melding-hendelse. Interne tjenester som skal behandle hendelsene lytter på kafka topicen.
+
+Dokdigdirhendelser eksponerer et webhook-endepunkt som er registrert i Altinn, og mottar hendelser som leveres til dette endepunktet. Se [dokumentasjonen fra Altinn](https://docs.altinn.studio/nb/events/subscribe-to-events/) for mer informasjon om hvordan dette gjøres.
 
 Hendelsene blir publiserte til følgende Kafka-topic:
 - teamdokumenthandtering.privat-altinn-melding-hendelse i prod-gcp 
