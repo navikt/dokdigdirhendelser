@@ -18,21 +18,21 @@ public class AltinnMeldingHendelse {
 	private static final String KAFKA_NOT_AUTHENTICATED = "Not authenticated to publish to topic: ";
 	private static final String KAFKA_FAILED_TO_SEND = "Failed to send message to kafka. Topic: ";
 
-	private final KafkaTemplate<String, AltinnEvents> kafkaTemplate;
+	private final KafkaTemplate<String, AltinnEvent> kafkaTemplate;
 	private final DokDigdirHendelserProperties.TopicsProperties topicsProperties;
 
-	public AltinnMeldingHendelse(KafkaTemplate<String, AltinnEvents> kafkaTemplate,
+	public AltinnMeldingHendelse(KafkaTemplate<String, AltinnEvent> kafkaTemplate,
 								 DokDigdirHendelserProperties altinnProperties) {
 		this.kafkaTemplate = kafkaTemplate;
 		this.topicsProperties = altinnProperties.topics();
 	}
 
-	public void publish(AltinnEvents altinnEvents) {
+	public void publish(AltinnEvent altinnEvent) {
 		final String topic = topicsProperties.altinnMeldingHendelse();
-		ProducerRecord<String, AltinnEvents> altinnEventsProducerRecord = new ProducerRecord<>(
+		ProducerRecord<String, AltinnEvent> altinnEventsProducerRecord = new ProducerRecord<>(
 				topicsProperties.altinnMeldingHendelse(),
-				altinnEvents.id().toString(),
-				altinnEvents
+				altinnEvent.id().toString(),
+				altinnEvent
 		);
 
 		kafkaTemplate.send(altinnEventsProducerRecord)
@@ -41,7 +41,7 @@ public class AltinnMeldingHendelse {
 						handleKafkaError(topic, ex);
 					} else {
 						log.info("altinnEvent med (id={}, resourceinstance={}) skrevet til topic: {}.",
-								altinnEvents.id(), altinnEvents.resourceinstance(), topic);
+								altinnEvent.id(), altinnEvent.resourceinstance(), topic);
 					}
 				});
 	}
