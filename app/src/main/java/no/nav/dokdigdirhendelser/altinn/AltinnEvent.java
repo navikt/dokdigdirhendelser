@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Builder
-public record AltinnEvents(
+public record AltinnEvent(
 		@NotNull(message = "id kan ikke være null og må være en gyldig UUID.")
 		UUID id,
 		@NotBlank(message = "resource kan ikke være tom")

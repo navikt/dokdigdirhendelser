@@ -1,7 +1,7 @@
 package no.nav.dokdigdirhendelser.altinn.config;
 
 import no.nav.dokdigdirhendelser.Application;
-import no.nav.dokdigdirhendelser.altinn.AltinnEvents;
+import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
 import no.nav.dokdigdirhendelser.config.DokDigdirHendelserProperties;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -40,22 +40,22 @@ public class AbstractIT {
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	protected EmbeddedKafkaBroker embeddedKafkaBroker;
 
-	protected Consumer<String, AltinnEvents> setupKafkaConsumer() {
+	protected Consumer<String, AltinnEvent> setupKafkaConsumer() {
 		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps(embeddedKafkaBroker, "itest-group", true);
 		consumerProps.put(KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
 		consumerProps.put(VALUE_DESERIALIZER_CLASS_CONFIG, JacksonJsonDeserializer.class.getName());
-		consumerProps.put(JacksonJsonDeserializer.VALUE_DEFAULT_TYPE, AltinnEvents.class.getName());
+		consumerProps.put(JacksonJsonDeserializer.VALUE_DEFAULT_TYPE, AltinnEvent.class.getName());
 
 		consumerProps.put(GROUP_INSTANCE_ID_CONFIG, "itest-group-instance");
 
-		var consumer = new DefaultKafkaConsumerFactory<String, AltinnEvents>(consumerProps).createConsumer();
+		var consumer = new DefaultKafkaConsumerFactory<String, AltinnEvent>(consumerProps).createConsumer();
 		consumer.subscribe(singletonList(PRIVAT_ALTINN_MELDING_TOPIC));
 		return consumer;
 	}
 
-	protected AltinnEvents readFromAltinnEventsTopic() {
+	protected AltinnEvent readFromAltinnEventsTopic() {
 		try (var consumer = setupKafkaConsumer()) {
-			ConsumerRecord<String, AltinnEvents> singleRecord = KafkaTestUtils.getSingleRecord(consumer, PRIVAT_ALTINN_MELDING_TOPIC, ofSeconds(5));
+			ConsumerRecord<String, AltinnEvent> singleRecord = KafkaTestUtils.getSingleRecord(consumer, PRIVAT_ALTINN_MELDING_TOPIC, ofSeconds(5));
 			assertThat(singleRecord).withFailMessage("Record fra topic er null").isNotNull();
 			return singleRecord.value();
 		} catch (IllegalStateException _) {

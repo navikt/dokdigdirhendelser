@@ -2,7 +2,7 @@ package no.nav.dokdigdirhendelser.altinn.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import no.nav.dokdigdirhendelser.altinn.AltinnEvents;
+import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -52,7 +52,7 @@ class AltinnEventControllerIT extends AbstractIT {
 
 	@Test
 	void shouldReturnAltinnEvents() {
-		AltinnEvents altinnEvent = createValidAltinnEvent(SPEC_VERSION);
+		AltinnEvent altinnEvent = createValidAltinnEvent(SPEC_VERSION);
 
 		var response = restTestClient.post()
 				.uri("/rest/webhook/path")
@@ -63,7 +63,7 @@ class AltinnEventControllerIT extends AbstractIT {
 
 		assertThat(response.getStatus()).isEqualTo(OK);
 
-		AltinnEvents altinnEventReadFromTopic = readFromAltinnEventsTopic();
+		AltinnEvent altinnEventReadFromTopic = readFromAltinnEventsTopic();
 
 		assertThat(convertToJson(altinnEvent)).isEqualTo(convertToJson(altinnEventReadFromTopic));
 
@@ -79,7 +79,7 @@ class AltinnEventControllerIT extends AbstractIT {
 
 	@ParameterizedTest
 	@MethodSource
-	void shouldReturnOKWhenAltinnEventRequestenAreInvalid(AltinnEvents invalidEvent) {
+	void shouldReturnOKWhenAltinnEventRequestenAreInvalid(AltinnEvent invalidEvent) {
 		var response = restTestClient.post()
 				.uri("/rest/webhook/path")
 				.body(invalidEvent)
@@ -89,13 +89,13 @@ class AltinnEventControllerIT extends AbstractIT {
 
 		assertThat(response.getStatus()).isEqualTo(OK);
 
-		AltinnEvents altinnEventReadFromTopic = readFromAltinnEventsTopic();
+		AltinnEvent altinnEventReadFromTopic = readFromAltinnEventsTopic();
 		assertThat(altinnEventReadFromTopic).isNull();
 	}
 
 	@Test
 	void shoudThrowInternalServerErrorWhenSpecversionAreInvalid() {
-		AltinnEvents altinnEvent = createValidAltinnEvent(INVALID_VERSION);
+		AltinnEvent altinnEvent = createValidAltinnEvent(INVALID_VERSION);
 
 		var response = restTestClient.post()
 				.uri("/rest/webhook/path")
@@ -106,7 +106,7 @@ class AltinnEventControllerIT extends AbstractIT {
 
 		assertThat(response.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
 
-		AltinnEvents altinnEventReadFromTopic = readFromAltinnEventsTopic();
+		AltinnEvent altinnEventReadFromTopic = readFromAltinnEventsTopic();
 		assertThat(altinnEventReadFromTopic).isNull();
 	}
 
@@ -114,7 +114,7 @@ class AltinnEventControllerIT extends AbstractIT {
 		return Stream.of(
 				Arguments.of(
 						//invalid id
-						AltinnEvents.builder()
+						AltinnEvent.builder()
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
 								.resource(ALTINN_EVENTS_RESOURCE)
@@ -125,7 +125,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.build()),
 				//invalid type
 				Arguments.of(
-						AltinnEvents.builder()
+						AltinnEvent.builder()
 								.id(EVENT_ID)
 								.type(INVALID_EVENT_TYPE)
 								.time(TIME)
@@ -137,7 +137,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.build()),
 				//invalid time
 				Arguments.of(
-						AltinnEvents.builder()
+						AltinnEvent.builder()
 								.id(EVENT_ID)
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.resource(ALTINN_EVENTS_RESOURCE)
@@ -148,7 +148,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.build()),
 				//invalid resource
 				Arguments.of(
-						AltinnEvents.builder()
+						AltinnEvent.builder()
 								.id(EVENT_ID)
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
@@ -160,7 +160,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.build()),
 				//invalid alternativesubject
 				Arguments.of(
-						AltinnEvents.builder()
+						AltinnEvent.builder()
 								.id(EVENT_ID)
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
@@ -172,7 +172,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.build()),
 				//invalid resourceinstance
 				Arguments.of(
-						AltinnEvents.builder()
+						AltinnEvent.builder()
 								.id(EVENT_ID)
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
@@ -183,7 +183,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.build()),
 				//invalid source
 				Arguments.of(
-						AltinnEvents.builder()
+						AltinnEvent.builder()
 								.id(EVENT_ID)
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
@@ -195,8 +195,8 @@ class AltinnEventControllerIT extends AbstractIT {
 		);
 	}
 
-	private AltinnEvents createValidAltinnEvent(String specVersion) {
-		return AltinnEvents.builder()
+	private AltinnEvent createValidAltinnEvent(String specVersion) {
+		return AltinnEvent.builder()
 				.id(EVENT_ID)
 				.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 				.time(TIME)
@@ -208,7 +208,7 @@ class AltinnEventControllerIT extends AbstractIT {
 				.build();
 	}
 
-	private String convertToJson(AltinnEvents altinnEvent) {
+	private String convertToJson(AltinnEvent altinnEvent) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.registerModule(new JavaTimeModule());

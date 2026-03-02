@@ -23,13 +23,13 @@ public class AltinnEventsController {
 	}
 
 	@PostMapping
-	public ResponseEntity<String> mottakAltinnMelding(@Valid @RequestBody AltinnEvents altinnEvents) {
+	public ResponseEntity<String> mottakAltinnMelding(@Valid @RequestBody AltinnEvent altinnEvent) {
 		log.info("Mottatt Altinn melding med id={}, resourceinstance={}, type={}",
-				altinnEvents.id(), altinnEvents.resourceinstance(), altinnEvents.type());
+				altinnEvent.id(), altinnEvent.resourceinstance(), altinnEvent.type());
 
-		validerAltinnEvent(altinnEvents);
+		validerAltinnEvent(altinnEvent);
 
-		altinnMeldingHendelse.publish(altinnEvents);
+		altinnMeldingHendelse.publish(altinnEvent);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
