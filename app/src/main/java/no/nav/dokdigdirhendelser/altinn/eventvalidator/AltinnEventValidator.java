@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
 import no.nav.dokdigdirhendelser.exception.DokDigdirHendelserTechnicalException;
 
-import static java.lang.String.format;
 import static no.nav.dokdigdirhendelser.altinn.AltinnEvent.ALTINN_EVENT_TYPES;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_EVENTS_RESOURCE;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.SPEC_VERSION;
+import static no.nav.dokdigdirhendelser.utils.SafeLog.sanitize;
 
 @Slf4j
 public class AltinnEventValidator {
@@ -22,7 +22,7 @@ public class AltinnEventValidator {
 		}
 
 		if (!ALTINN_EVENT_TYPES.contains(altinnEvent.type())) {
-			throw new IllegalArgumentException(format("Ugyldig verdi: \"%s\"er ugyldig event type", altinnEvent.type()));
+			throw new IllegalArgumentException("Ugyldig verdi: \"%s\" er ikke en gyldig event type".formatted(sanitize(altinnEvent.type())));
 		}
 
 		if (!SPEC_VERSION.equals(altinnEvent.specversion())) {

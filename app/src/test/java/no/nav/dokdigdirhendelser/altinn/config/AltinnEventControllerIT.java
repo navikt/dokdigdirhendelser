@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.client.RestTestClient;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -36,6 +37,7 @@ class AltinnEventControllerIT extends AbstractIT {
 	private static final String INVALID_VERSION = "2.0";
 	private static final String INVALID_ALTINN_EVENTS_RESOURCE = "urn:altinn:resource:";
 	private static final String INVALID_ALTINN_ALTERNATIVE_SUBJECT = "/organisation/889640798";
+	private static final String WEBHOOK_PATH = "/rest/webhook/path";
 
 
 	@LocalServerPort
@@ -55,7 +57,7 @@ class AltinnEventControllerIT extends AbstractIT {
 		AltinnEvent altinnEvent = createValidAltinnEvent(SPEC_VERSION);
 
 		var response = restTestClient.post()
-				.uri("/rest/webhook/path")
+				.uri(WEBHOOK_PATH)
 				.body(altinnEvent)
 				.exchange()
 				.expectStatus().isOk()
@@ -80,17 +82,25 @@ class AltinnEventControllerIT extends AbstractIT {
 	@ParameterizedTest
 	@MethodSource
 	void shouldReturnOKWhenAltinnEventRequestenAreInvalid(AltinnEvent invalidEvent) {
-		var response = restTestClient.post()
-				.uri("/rest/webhook/path")
+		restTestClient.post()
+				.uri(WEBHOOK_PATH)
 				.body(invalidEvent)
 				.exchange()
-				.expectStatus().isOk()
-				.returnResult();
+				.expectStatus().isOk();
 
-		assertThat(response.getStatus()).isEqualTo(OK);
+		assertTopicIsEmpty();
+	}
 
-		AltinnEvent altinnEventReadFromTopic = readFromAltinnEventsTopic();
-		assertThat(altinnEventReadFromTopic).isNull();
+	@Test
+	void shouldReturnBadRequestWhenRequestContainsUnknownFields() {
+		restTestClient.post()
+				.uri(WEBHOOK_PATH)
+				.body(Map.of("ukjent_felt", "en_eller_annen_verdi"))
+				.exchange()
+				.expectStatus()
+				.isBadRequest();
+
+		assertTopicIsEmpty();
 	}
 
 	@Test
@@ -98,7 +108,7 @@ class AltinnEventControllerIT extends AbstractIT {
 		AltinnEvent altinnEvent = createValidAltinnEvent(INVALID_VERSION);
 
 		var response = restTestClient.post()
-				.uri("/rest/webhook/path")
+				.uri(WEBHOOK_PATH)
 				.body(altinnEvent)
 				.exchange()
 				.expectStatus().is5xxServerError()
@@ -106,8 +116,7 @@ class AltinnEventControllerIT extends AbstractIT {
 
 		assertThat(response.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
 
-		AltinnEvent altinnEventReadFromTopic = readFromAltinnEventsTopic();
-		assertThat(altinnEventReadFromTopic).isNull();
+		assertTopicIsEmpty();
 	}
 
 	private static Stream<Arguments> shouldReturnOKWhenAltinnEventRequestenAreInvalid() {

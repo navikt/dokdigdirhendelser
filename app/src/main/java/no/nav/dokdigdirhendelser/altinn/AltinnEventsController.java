@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static no.nav.dokdigdirhendelser.altinn.eventvalidator.AltinnEventValidator.validerAltinnEvent;
+import static no.nav.dokdigdirhendelser.utils.SafeLog.sanitize;
 
 @Slf4j
 @RestController
@@ -25,7 +26,7 @@ public class AltinnEventsController {
 	@PostMapping
 	public ResponseEntity<String> mottakAltinnMelding(@Valid @RequestBody AltinnEvent altinnEvent) {
 		log.info("Mottatt Altinn melding med id={}, resourceinstance={}, type={}",
-				altinnEvent.id(), altinnEvent.resourceinstance(), altinnEvent.type());
+				altinnEvent.id(), altinnEvent.resourceinstance(), sanitize(altinnEvent.type()));
 
 		validerAltinnEvent(altinnEvent);
 
