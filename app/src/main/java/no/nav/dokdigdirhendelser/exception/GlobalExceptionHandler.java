@@ -1,5 +1,6 @@
 package no.nav.dokdigdirhendelser.exception;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -8,10 +9,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import tools.jackson.databind.exc.InvalidFormatException;
+import tools.jackson.databind.exc.UnrecognizedPropertyException;
 
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -20,30 +22,37 @@ import static org.springframework.http.HttpStatus.OK;
 public class GlobalExceptionHandler {
 
 	@ResponseStatus(OK)
-	@ExceptionHandler({MethodArgumentNotValidException.class})
-	public ProblemDetail handleValidationException(MethodArgumentNotValidException ex) {
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public void handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
 		String errors = ex.getBindingResult()
 				.getFieldErrors()
 				.stream()
 				.collect(Collectors.toMap(
 						FieldError::getField,
 						error -> error.getDefaultMessage() != null ? error.getDefaultMessage() : "Ugyldig verdi",
-						(existing, replacement) -> existing
+						(existing, _) -> existing
 				)).values().stream().findFirst().orElse("");
 
 		log.error(errors);
-		return ProblemDetail.forStatus(OK);
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public void handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletResponse response) {
+		if (ex.getCause() instanceof UnrecognizedPropertyException) {
+			log.error("Behandling av melding avbrutt pga ukjent felt.");
+			response.setStatus(BAD_REQUEST.value());
+		} else {
+			log.error("Behandling av melding avbrutt: kunne ikke lese JSON-innhold.");
+			response.setStatus(OK.value());
+		}
 	}
 
 	@ResponseStatus(OK)
-	@ExceptionHandler({IllegalArgumentException.class, HttpMessageNotReadableException.class,
-			InvalidFormatException.class})
-	public ProblemDetail handleIllegalArgumentException(Exception ex) {
+	@ExceptionHandler(IllegalArgumentException.class)
+	public void handleIllegalArgumentException(IllegalArgumentException ex) {
 		log.error(ex.getMessage());
-		return ProblemDetail.forStatus(OK);
 	}
 
-	@ResponseStatus(INTERNAL_SERVER_ERROR)
 	@ExceptionHandler({DokDigdirHendelserTechnicalException.class, Exception.class})
 	public ProblemDetail handleGenericException(Exception ex) {
 		log.error("Feilet teknisk:{}", ex.getMessage(), ex);

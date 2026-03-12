@@ -15,6 +15,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.Duration;
 import java.util.Map;
 
 import static java.time.Duration.ofSeconds;
@@ -60,6 +61,18 @@ public class AbstractIT {
 			return singleRecord.value();
 		} catch (IllegalStateException _) {
 			return null;
+		}
+	}
+
+	protected void assertTopicIsEmpty() {
+		try (var consumer = setupKafkaConsumer()) {
+			while (consumer.assignment().isEmpty()) {
+				consumer.poll(Duration.ofMillis(50));
+			}
+			var records = consumer.poll(Duration.ofMillis(200));
+			assertThat(records.isEmpty())
+					.withFailMessage("Forventet ingen meldinger på topic, men fant %d", records.count())
+					.isTrue();
 		}
 	}
 }
