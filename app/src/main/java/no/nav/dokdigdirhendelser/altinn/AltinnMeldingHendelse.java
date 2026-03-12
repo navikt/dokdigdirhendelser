@@ -10,6 +10,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.concurrent.ExecutionException;
+
 @Slf4j
 @Component
 @EnableTransactionManagement
@@ -35,15 +37,19 @@ public class AltinnMeldingHendelse {
 				altinnEvent
 		);
 
-		kafkaTemplate.send(altinnEventsProducerRecord)
-				.whenComplete((result, ex) -> {
-					if (ex != null) {
-						handleKafkaError(topic, ex);
-					} else {
-						log.info("altinnEvent med (id={}, resourceinstance={}) skrevet til topic: {}.",
-								altinnEvent.id(), altinnEvent.resourceinstance(), topic);
-					}
-				});
+		try {
+			kafkaTemplate.send(altinnEventsProducerRecord)
+					.whenComplete((_, ex) -> {
+						if (ex != null) {
+							handleKafkaError(topic, ex);
+						} else {
+							log.info("altinnEvent med (id={}, resourceinstance={}) skrevet til topic: {}.",
+									altinnEvent.id(), altinnEvent.resourceinstance(), topic);
+						}
+					}).get();
+		} catch (ExecutionException | InterruptedException e) {
+			handleKafkaError(topic, e);
+		}
 	}
 
 	private void handleKafkaError(String topic, Throwable ex) {
