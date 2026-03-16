@@ -1,19 +1,21 @@
-package no.nav.dokdigdirhendelser.altinn.config;
+package no.nav.dokdigdirhendelser.altinn;
 
 import no.nav.dokdigdirhendelser.Application;
-import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
 import no.nav.dokdigdirhendelser.config.DokDigdirHendelserProperties;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.client.RestTestClient;
 
 import java.time.Duration;
 import java.util.Map;
@@ -36,10 +38,23 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 public class AbstractIT {
 
 	protected static final String PRIVAT_ALTINN_MELDING_TOPIC = "altinn-melding-hendelse";
+	protected static final String WEBHOOK_PATH = "/rest/webhook/path";
 
 	@Autowired
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	protected EmbeddedKafkaBroker embeddedKafkaBroker;
+
+	@LocalServerPort
+	private int port;
+
+	protected RestTestClient restTestClient;
+
+	@BeforeEach
+	void setup() {
+		this.restTestClient = RestTestClient.bindToServer()
+				.baseUrl("http://localhost:" + port)
+				.build();
+	}
 
 	protected Consumer<String, AltinnEvent> setupKafkaConsumer() {
 		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps(embeddedKafkaBroker, "itest-group", true);
