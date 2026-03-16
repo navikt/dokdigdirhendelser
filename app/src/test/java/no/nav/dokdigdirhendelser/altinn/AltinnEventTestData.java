@@ -4,7 +4,6 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_ALTERNATIVE_SUBJECT;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_EVENTS_RESOURCE;
 
 public final class AltinnEventTestData {
@@ -12,7 +11,6 @@ public final class AltinnEventTestData {
 	public static final String INVALID_EVENT_TYPE = "invalid.event.type";
 	public static final String INVALID_VERSION = "2.0";
 	public static final String INVALID_ALTINN_EVENTS_RESOURCE = "urn:altinn:resource:";
-	public static final String INVALID_ALTINN_ALTERNATIVE_SUBJECT = "/organisation/889640798";
 	public static final UUID EVENT_ID = UUID.fromString("af0e7e0c-579c-4563-9398-10cdf031b80d");
 	public static final String EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ = "no.altinn.correspondence.correspondencereceiverread";
 	public static final UUID RESOURCE_INSTANCE = UUID.fromString("af0e7e0c-579c-4563-9398-10cdf031b80A");
@@ -29,7 +27,6 @@ public final class AltinnEventTestData {
 				.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 				.time(TIME)
 				.resource(ALTINN_EVENTS_RESOURCE)
-				.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
 				.resourceinstance(RESOURCE_INSTANCE)
 				.source(EVENT_SOURCE)
 				.specversion(specVersion)

@@ -2,7 +2,7 @@
   "APP_NAME": "dokdigdirhendelser",
   "KAFKA_POOL": "nav-prod",
   "DOKDIGDIRHENDELSER_SECRET": "dokdigdirhendelser",
-  "ALTINN_IP_ADDRESS_WHITELIST": "20.100.46.139/32",
+  "ALTINN_IP_ADDRESS_WHITELIST": "51.13.20.208/31,51.13.20.210/31",
   "DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE":"teamdokumenthandtering.privat-altinn-melding-hendelse",
   "ENVIRONMENT": "prod-gcp",
   "MIN_REPLICAS": "3",

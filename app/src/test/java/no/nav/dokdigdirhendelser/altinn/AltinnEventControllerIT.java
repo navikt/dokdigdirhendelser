@@ -10,8 +10,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.*;
-import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_ALTERNATIVE_SUBJECT;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.EVENT_ID;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.EVENT_SOURCE;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.INVALID_ALTINN_EVENTS_RESOURCE;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.INVALID_EVENT_TYPE;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.INVALID_VERSION;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.RESOURCE_INSTANCE;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.TIME;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.VERSION;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.createValidAltinnEvent;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_EVENTS_RESOURCE;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.SPEC_VERSION;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +49,6 @@ class AltinnEventControllerIT extends AbstractIT {
 		assertThat(altinnEventReadFromTopic.type()).isEqualTo(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ);
 		assertThat(altinnEventReadFromTopic.time()).isEqualTo(TIME);
 		assertThat(altinnEventReadFromTopic.resource()).isEqualTo(ALTINN_EVENTS_RESOURCE);
-		assertThat(altinnEventReadFromTopic.alternativesubject()).isEqualTo(ALTINN_ALTERNATIVE_SUBJECT);
 		assertThat(altinnEventReadFromTopic.resourceinstance()).isEqualTo(RESOURCE_INSTANCE);
 		assertThat(altinnEventReadFromTopic.source()).isEqualTo(EVENT_SOURCE);
 		assertThat(altinnEventReadFromTopic.specversion()).isEqualTo(VERSION);
@@ -95,7 +102,6 @@ class AltinnEventControllerIT extends AbstractIT {
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
 								.resource(ALTINN_EVENTS_RESOURCE)
-								.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
 								.resourceinstance(RESOURCE_INSTANCE)
 								.source(EVENT_SOURCE)
 								.specversion(VERSION)
@@ -107,7 +113,6 @@ class AltinnEventControllerIT extends AbstractIT {
 								.type(INVALID_EVENT_TYPE)
 								.time(TIME)
 								.resource(ALTINN_EVENTS_RESOURCE)
-								.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
 								.resourceinstance(RESOURCE_INSTANCE)
 								.source(EVENT_SOURCE)
 								.specversion(VERSION)
@@ -118,7 +123,6 @@ class AltinnEventControllerIT extends AbstractIT {
 								.id(EVENT_ID)
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.resource(ALTINN_EVENTS_RESOURCE)
-								.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
 								.resourceinstance(RESOURCE_INSTANCE)
 								.source(EVENT_SOURCE)
 								.specversion(SPEC_VERSION)
@@ -130,7 +134,6 @@ class AltinnEventControllerIT extends AbstractIT {
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
 								.resource(INVALID_ALTINN_EVENTS_RESOURCE)
-								.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
 								.resourceinstance(RESOURCE_INSTANCE)
 								.source(EVENT_SOURCE)
 								.specversion(SPEC_VERSION)
@@ -142,7 +145,6 @@ class AltinnEventControllerIT extends AbstractIT {
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
 								.resource(INVALID_ALTINN_EVENTS_RESOURCE)
-								.alternativesubject(INVALID_ALTINN_ALTERNATIVE_SUBJECT)
 								.resourceinstance(RESOURCE_INSTANCE)
 								.source(EVENT_SOURCE)
 								.specversion(SPEC_VERSION)
@@ -154,7 +156,6 @@ class AltinnEventControllerIT extends AbstractIT {
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
 								.resource(ALTINN_EVENTS_RESOURCE)
-								.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
 								.source(EVENT_SOURCE)
 								.specversion(VERSION)
 								.build()),
@@ -165,7 +166,6 @@ class AltinnEventControllerIT extends AbstractIT {
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
 								.resource(ALTINN_EVENTS_RESOURCE)
-								.alternativesubject(ALTINN_ALTERNATIVE_SUBJECT)
 								.resourceinstance(RESOURCE_INSTANCE)
 								.specversion(VERSION)
 								.build())
