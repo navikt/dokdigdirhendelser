@@ -23,6 +23,8 @@ public record AltinnEvent(
 		String specversion,
 		@NotBlank(message = "type kan ikke være tom")
 		String type,
+		String subject,
+		String alternativesubject,
 		@NotNull(message = "time kan ikke være null")
 		OffsetDateTime time) {
 
