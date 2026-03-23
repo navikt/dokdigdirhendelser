@@ -2,7 +2,6 @@ package no.nav.dokdigdirhendelser.altinn;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 import java.net.URI;
@@ -25,8 +24,6 @@ public record AltinnEvent(
 		@NotBlank(message = "type kan ikke være tom")
 		String type,
 		String subject,
-		@NotBlank(message = "alternativesubject kan ikke være tom")
-		@Pattern(regexp = "^/organisation/\\d{9}$", message = "alternativesubject må være på formatet /organisation/{9 siffer}")
 		String alternativesubject,
 		@NotNull(message = "time kan ikke være null")
 		OffsetDateTime time) {
