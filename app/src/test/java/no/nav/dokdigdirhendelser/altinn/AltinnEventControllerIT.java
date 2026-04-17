@@ -1,7 +1,5 @@
 package no.nav.dokdigdirhendelser.altinn;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -173,12 +171,6 @@ class AltinnEventControllerIT extends AbstractIT {
 	}
 
 	private String convertToJson(AltinnEvent altinnEvent) {
-		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper.registerModule(new JavaTimeModule());
-			return objectMapper.writeValueAsString(altinnEvent);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to convert AltinnEvents to JSON", e);
-		}
+		return jsonMapper.writeValueAsString(altinnEvent);
 	}
 }
