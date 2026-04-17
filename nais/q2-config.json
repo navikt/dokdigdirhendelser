@@ -6,7 +6,7 @@
   "DOKDIGDIRHENDELSER_TOPICS_ALTINN_MELDING_HENDELSE":"teamdokumenthandtering.privat-altinn-melding-hendelse",
   "ENVIRONMENT": "dev-gcp",
   "MIN_REPLICAS": "3",
-  "MAX_REPLICAS": "6",
+  "MAX_REPLICAS": "3",
   "INGRESSES": [
     "https://dokdigdirhendelser.ekstern.dev.nav.no"
   ]

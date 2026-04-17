@@ -16,6 +16,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.client.RestTestClient;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Duration;
 import java.util.Map;
@@ -43,6 +44,8 @@ public class AbstractIT {
 	@Autowired
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 	protected EmbeddedKafkaBroker embeddedKafkaBroker;
+	@Autowired
+	protected JsonMapper jsonMapper;
 
 	@LocalServerPort
 	private int port;
