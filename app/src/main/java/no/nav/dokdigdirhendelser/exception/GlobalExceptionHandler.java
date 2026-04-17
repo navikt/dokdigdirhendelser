@@ -39,10 +39,10 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public void handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletResponse response) {
 		if (ex.getCause() instanceof UnrecognizedPropertyException) {
-			log.error("Behandling av melding avbrutt pga ukjent felt.");
+			log.error("Behandling av melding avbrutt pga ukjent felt.", ex);
 			response.setStatus(BAD_REQUEST.value());
 		} else {
-			log.error("Behandling av melding avbrutt: kunne ikke lese JSON-innhold.");
+			log.error("Behandling av melding avbrutt: kunne ikke lese JSON-innhold.", ex);
 			response.setStatus(OK.value());
 		}
 	}
