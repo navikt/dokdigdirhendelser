@@ -28,7 +28,8 @@ public record AltinnEvent(
 		@NotNull(message = "time kan ikke være null")
 		OffsetDateTime time) {
 
-	public static final Set<String> ALTINN_EVENT_TYPES = Set.of("no.altinn.correspondence.attachmentinitialized",
+	public static final Set<String> ALTINN_EVENT_TYPES = Set.of(
+			"no.altinn.correspondence.attachmentinitialized",
 			"no.altinn.correspondence.attachmentuploadprocessing",
 			"no.altinn.correspondence.attachmentpublished",
 			"no.altinn.correspondence.attachmentuploadfailed",
@@ -41,7 +42,9 @@ public record AltinnEvent(
 			"no.altinn.correspondence.correspondencereceiverconfirmed",
 			"no.altinn.correspondence.correspondencereceiverreserved",
 			"no.altinn.correspondence.correspondencenotificationcreationfailed",
+			"no.altinn.correspondence.correspondencenotificationfailed",
 			"no.altinn.correspondence.correspondencepublished",
 			"no.altinn.correspondence.correspondencereceiverneverread",
-			"no.altinn.correspondence.correspondencereceiverneverconfirmed");
+			"no.altinn.correspondence.correspondencereceiverneverconfirmed"
+	);
 }
