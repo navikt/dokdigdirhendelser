@@ -3,6 +3,7 @@ package no.nav.dokdigdirhendelser.altinn.eventvalidator;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdigdirhendelser.altinn.AltinnEvent;
 import no.nav.dokdigdirhendelser.exception.DokDigdirHendelserTechnicalException;
+import no.nav.dokdigdirhendelser.exception.HendelseTypeBehandlesIkkeException;
 
 import static no.nav.dokdigdirhendelser.altinn.AltinnEvent.ALTINN_EVENT_TYPES;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_EVENTS_RESOURCE;
@@ -22,7 +23,7 @@ public class AltinnEventValidator {
 		}
 
 		if (!ALTINN_EVENT_TYPES.contains(altinnEvent.type())) {
-			throw new IllegalArgumentException("Ugyldig verdi: \"%s\" er ikke en gyldig event type".formatted(sanitize(altinnEvent.type())));
+			throw new HendelseTypeBehandlesIkkeException("hendelse type=%s behandles ikke".formatted(sanitize(altinnEvent.type())));
 		}
 
 		if (!SPEC_VERSION.equals(altinnEvent.specversion())) {
