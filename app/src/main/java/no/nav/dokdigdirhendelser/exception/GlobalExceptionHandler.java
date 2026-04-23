@@ -53,6 +53,12 @@ public class GlobalExceptionHandler {
 		log.error(ex.getMessage());
 	}
 
+	@ResponseStatus(OK)
+	@ExceptionHandler(HendelseTypeBehandlesIkkeException.class)
+	public void handleEventTypeBehandlesIkkeException(HendelseTypeBehandlesIkkeException ex) {
+		log.info(ex.getMessage());
+	}
+
 	@ExceptionHandler({DokDigdirHendelserTechnicalException.class, Exception.class})
 	public ProblemDetail handleGenericException(Exception ex) {
 		log.error("Feilet teknisk:{}", ex.getMessage(), ex);
