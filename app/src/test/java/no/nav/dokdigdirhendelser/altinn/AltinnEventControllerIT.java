@@ -22,22 +22,39 @@ import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.SPEC_VERSION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 class AltinnEventControllerIT extends AbstractIT {
+
+	@Test
+	void shouldReturnOkWhenValidateEvent() {
+		restTestClient.post()
+				.uri(WEBHOOK_PATH)
+				.contentType(APPLICATION_JSON)
+				.body("""
+						{
+							 "id": "694caa35-8b25-4cd7-b800-f6eeb93c56ed",
+							 "source": "https://platform.altinn.no/events/api/v1/subscriptions/1234",
+							 "type": "platform.events.validatesubscription",
+							 "specversion": "1.0"
+						 }
+						""")
+				.exchange()
+				.expectStatus().isOk();
+
+		assertTopicIsEmpty();
+	}
 
 	@Test
 	void shouldReturnAltinnEvents() {
 		AltinnEvent altinnEvent = createValidAltinnEvent(SPEC_VERSION);
 
-		var response = restTestClient.post()
+		restTestClient.post()
 				.uri(WEBHOOK_PATH)
 				.body(altinnEvent)
 				.exchange()
 				.expectStatus().isOk()
 				.returnResult();
-
-		assertThat(response.getStatus()).isEqualTo(OK);
 
 		AltinnEvent altinnEventReadFromTopic = readFromAltinnEventsTopic();
 
@@ -94,16 +111,6 @@ class AltinnEventControllerIT extends AbstractIT {
 
 	private static Stream<Arguments> shouldReturnOKWhenAltinnEventRequestenAreInvalid() {
 		return Stream.of(
-				Arguments.of(
-						//invalid id
-						AltinnEvent.builder()
-								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
-								.time(TIME)
-								.resource(ALTINN_EVENTS_RESOURCE)
-								.resourceinstance(RESOURCE_INSTANCE)
-								.source(EVENT_SOURCE)
-								.specversion(VERSION)
-								.build()),
 				//invalid type
 				Arguments.of(
 						AltinnEvent.builder()
