@@ -39,7 +39,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 public class AbstractIT {
 
 	protected static final String PRIVAT_ALTINN_MELDING_TOPIC = "altinn-melding-hendelse";
-	protected static final String WEBHOOK_PATH = "/rest/webhook/path";
+	protected static final String WEBHOOK_PATH = "/rest/webhook/path?code=1234abcd";
 
 	@Autowired
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
