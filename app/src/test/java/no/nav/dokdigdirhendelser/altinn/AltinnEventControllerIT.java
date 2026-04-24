@@ -46,6 +46,18 @@ class AltinnEventControllerIT extends AbstractIT {
 	}
 
 	@Test
+	void shouldReturnOkWhenCodeDoesNotMatch() {
+		restTestClient.post()
+				.uri("/rest/webhook/path?code=hei")
+				.contentType(APPLICATION_JSON)
+				.body(createValidAltinnEvent())
+				.exchange()
+				.expectStatus().isOk();
+
+		assertTopicIsEmpty();
+	}
+
+	@Test
 	void shouldReturnAltinnEvents() {
 		AltinnEvent altinnEvent = createValidAltinnEvent(SPEC_VERSION);
 
