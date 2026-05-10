@@ -1,6 +1,7 @@
 package no.nav.dokdigdirhendelser.altinn;
 
 import lombok.extern.slf4j.Slf4j;
+import no.altinn.event.domain.CloudEvent;
 import no.nav.dokdigdirhendelser.config.DokDigdirHendelserProperties;
 import no.nav.dokdigdirhendelser.exception.KafkaTechnicalException;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -20,31 +21,31 @@ public class AltinnMeldingHendelse {
 	private static final String KAFKA_NOT_AUTHENTICATED = "Not authenticated to publish to topic: ";
 	private static final String KAFKA_FAILED_TO_SEND = "Failed to send message to kafka. Topic: ";
 
-	private final KafkaTemplate<String, AltinnEvent> kafkaTemplate;
+	private final KafkaTemplate<String, CloudEvent> kafkaTemplate;
 	private final DokDigdirHendelserProperties.TopicsProperties topicsProperties;
 
-	public AltinnMeldingHendelse(KafkaTemplate<String, AltinnEvent> kafkaTemplate,
+	public AltinnMeldingHendelse(KafkaTemplate<String, CloudEvent> kafkaTemplate,
 								 DokDigdirHendelserProperties altinnProperties) {
 		this.kafkaTemplate = kafkaTemplate;
 		this.topicsProperties = altinnProperties.topics();
 	}
 
-	public void publish(AltinnEvent altinnEvent) {
+	public void publish(CloudEvent cloudEvent) {
 		final String topic = topicsProperties.altinnMeldingHendelse();
-		ProducerRecord<String, AltinnEvent> altinnEventsProducerRecord = new ProducerRecord<>(
+		ProducerRecord<String, CloudEvent> cloudEventProducerRecord = new ProducerRecord<>(
 				topicsProperties.altinnMeldingHendelse(),
-				altinnEvent.id().toString(),
-				altinnEvent
+				cloudEvent.getId().toString(),
+				cloudEvent
 		);
 
 		try {
-			kafkaTemplate.send(altinnEventsProducerRecord)
+			kafkaTemplate.send(cloudEventProducerRecord)
 					.whenComplete((_, ex) -> {
 						if (ex != null) {
 							handleKafkaError(topic, ex);
 						} else {
-							log.info("altinnEvent med (id={}, resourceinstance={}) skrevet til topic: {}.",
-									altinnEvent.id(), altinnEvent.resourceinstance(), topic);
+							log.info("cloudEvent med (id={}, resourceinstance={}) skrevet til topic: {}.",
+									cloudEvent.getId(), cloudEvent.getResourceinstance(), topic);
 						}
 					}).get();
 		} catch (ExecutionException | InterruptedException e) {

@@ -1,5 +1,6 @@
 package no.nav.dokdigdirhendelser.altinn;
 
+import no.altinn.event.domain.CloudEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,7 +18,7 @@ import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.INVALID_VERSI
 import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.RESOURCE_INSTANCE;
 import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.TIME;
 import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.VERSION;
-import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.createValidAltinnEvent;
+import static no.nav.dokdigdirhendelser.altinn.AltinnEventTestData.createValidCloudEvent;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_EVENTS_RESOURCE;
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.SPEC_VERSION;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,7 +51,7 @@ class AltinnEventControllerIT extends AbstractIT {
 		restTestClient.post()
 				.uri("/rest/webhook/path?code=hei")
 				.contentType(APPLICATION_JSON)
-				.body(createValidAltinnEvent())
+				.body(createValidCloudEvent())
 				.exchange()
 				.expectStatus().isOk();
 
@@ -59,31 +60,31 @@ class AltinnEventControllerIT extends AbstractIT {
 
 	@Test
 	void shouldReturnAltinnEvents() {
-		AltinnEvent altinnEvent = createValidAltinnEvent(SPEC_VERSION);
+		CloudEvent cloudEvent = createValidCloudEvent(SPEC_VERSION);
 
 		restTestClient.post()
 				.uri(WEBHOOK_PATH)
-				.body(altinnEvent)
+				.body(cloudEvent)
 				.exchange()
 				.expectStatus().isOk()
 				.returnResult();
 
-		AltinnEvent altinnEventReadFromTopic = readFromAltinnEventsTopic();
+		CloudEvent cloudEventReadFromTopic = readFromAltinnEventsTopic();
 
-		assertThat(convertToJson(altinnEvent)).isEqualTo(convertToJson(altinnEventReadFromTopic));
+		assertThat(convertToJson(cloudEvent)).isEqualTo(convertToJson(cloudEventReadFromTopic));
 
-		assertThat(altinnEventReadFromTopic.id()).isEqualTo(EVENT_ID);
-		assertThat(altinnEventReadFromTopic.type()).isEqualTo(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ);
-		assertThat(altinnEventReadFromTopic.time()).isEqualTo(TIME);
-		assertThat(altinnEventReadFromTopic.resource()).isEqualTo(ALTINN_EVENTS_RESOURCE);
-		assertThat(altinnEventReadFromTopic.resourceinstance()).isEqualTo(RESOURCE_INSTANCE);
-		assertThat(altinnEventReadFromTopic.source()).isEqualTo(EVENT_SOURCE);
-		assertThat(altinnEventReadFromTopic.specversion()).isEqualTo(VERSION);
+		assertThat(cloudEventReadFromTopic.getId()).isEqualTo(EVENT_ID);
+		assertThat(cloudEventReadFromTopic.getType()).isEqualTo(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ);
+		assertThat(cloudEventReadFromTopic.getTime()).isEqualTo(TIME);
+		assertThat(cloudEventReadFromTopic.getResource()).isEqualTo(ALTINN_EVENTS_RESOURCE);
+		assertThat(cloudEventReadFromTopic.getResourceinstance()).isEqualTo(RESOURCE_INSTANCE);
+		assertThat(cloudEventReadFromTopic.getSource()).isEqualTo(EVENT_SOURCE);
+		assertThat(cloudEventReadFromTopic.getSpecversion()).isEqualTo(VERSION);
 	}
 
 	@ParameterizedTest
 	@MethodSource
-	void shouldReturnOKWhenAltinnEventRequestenAreInvalid(AltinnEvent invalidEvent) {
+	void shouldReturnOKWhenAltinnEventRequestenAreInvalid(CloudEvent invalidEvent) {
 		restTestClient.post()
 				.uri(WEBHOOK_PATH)
 				.body(invalidEvent)
@@ -107,11 +108,11 @@ class AltinnEventControllerIT extends AbstractIT {
 
 	@Test
 	void shoudThrowInternalServerErrorWhenSpecversionAreInvalid() {
-		AltinnEvent altinnEvent = createValidAltinnEvent(INVALID_VERSION);
+		CloudEvent cloudEvent = createValidCloudEvent(INVALID_VERSION);
 
 		var response = restTestClient.post()
 				.uri(WEBHOOK_PATH)
-				.body(altinnEvent)
+				.body(cloudEvent)
 				.exchange()
 				.expectStatus().is5xxServerError()
 				.returnResult();
@@ -125,7 +126,7 @@ class AltinnEventControllerIT extends AbstractIT {
 		return Stream.of(
 				//invalid type
 				Arguments.of(
-						AltinnEvent.builder()
+						CloudEvent.builder()
 								.id(EVENT_ID)
 								.type(INVALID_EVENT_TYPE)
 								.time(TIME)
@@ -136,7 +137,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.build()),
 				//invalid time
 				Arguments.of(
-						AltinnEvent.builder()
+						CloudEvent.builder()
 								.id(EVENT_ID)
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.resource(ALTINN_EVENTS_RESOURCE)
@@ -146,7 +147,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.build()),
 				//invalid resource
 				Arguments.of(
-						AltinnEvent.builder()
+						CloudEvent.builder()
 								.id(EVENT_ID)
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
@@ -157,7 +158,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.build()),
 				//invalid alternativesubject
 				Arguments.of(
-						AltinnEvent.builder()
+						CloudEvent.builder()
 								.id(EVENT_ID)
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
@@ -168,7 +169,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.build()),
 				//invalid resourceinstance
 				Arguments.of(
-						AltinnEvent.builder()
+						CloudEvent.builder()
 								.id(EVENT_ID)
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
@@ -178,7 +179,7 @@ class AltinnEventControllerIT extends AbstractIT {
 								.build()),
 				//invalid source
 				Arguments.of(
-						AltinnEvent.builder()
+						CloudEvent.builder()
 								.id(EVENT_ID)
 								.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 								.time(TIME)
@@ -189,7 +190,7 @@ class AltinnEventControllerIT extends AbstractIT {
 		);
 	}
 
-	private String convertToJson(AltinnEvent altinnEvent) {
-		return jsonMapper.writeValueAsString(altinnEvent);
+	private String convertToJson(CloudEvent cloudEvent) {
+		return jsonMapper.writeValueAsString(cloudEvent);
 	}
 }

@@ -1,0 +1,52 @@
+openapi: 3.0.3
+info:
+  title: Altinn CloudEvents
+  description: |
+    CloudEvent contract for Altinn webhook payloads.
+    Based on https://docs.altinn.studio/swagger/altinn-platform-events-v1.json
+    and the CloudEvents v1.0 specification.
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    CloudEvent:
+      type: object
+      description: A CloudEvents v1.0 envelope as delivered by the Altinn events webhook.
+      required:
+        - id
+        - resource
+        - source
+        - specversion
+        - type
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identifies the event.
+        resource:
+          type: string
+          description: Altinn resource urn the event belongs to.
+        resourceinstance:
+          type: string
+          format: uuid
+          description: Identifier of the resource instance.
+        source:
+          type: string
+          format: uri
+          description: Identifies the context in which the event happened.
+        specversion:
+          type: string
+          description: The version of the CloudEvents specification which the event uses.
+        type:
+          type: string
+          description: Describes the type of event related to the originating occurrence.
+        subject:
+          type: string
+          description: Describes the subject of the event in the context of the event producer.
+        alternativesubject:
+          type: string
+          description: Alternative subject identifier for the event.
+        time:
+          type: string
+          format: date-time
+          description: Timestamp of when the occurrence happened.

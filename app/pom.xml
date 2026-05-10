@@ -12,6 +12,10 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>no.nav.dokdigdirhendelser</groupId>
+			<artifactId>altinn-schemas</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>

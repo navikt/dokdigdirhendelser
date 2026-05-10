@@ -1,25 +1,11 @@
 package no.nav.dokdigdirhendelser.altinn;
 
-import lombok.Builder;
-
-import java.net.URI;
-import java.time.OffsetDateTime;
 import java.util.Set;
-import java.util.UUID;
 
-@Builder
-public record AltinnEvent(
-		UUID id,
-		String resource,
-		UUID resourceinstance,
-		URI source,
-		String specversion,
-		String type,
-		String subject,
-		String alternativesubject,
-		OffsetDateTime time) {
+public final class AltinnEventTypes {
 
 	public static final String VALIDATE_SUBSCRIPTION_EVENT_TYPE = "platform.events.validatesubscription";
+
 	public static final Set<String> CORRESPONDENCE_EVENT_TYPES = Set.of(
 			"no.altinn.correspondence.correspondencepublishfailed",
 			"no.altinn.correspondence.correspondencereceiverread",
@@ -29,4 +15,6 @@ public record AltinnEvent(
 			"no.altinn.correspondence.correspondencepublished"
 	);
 
+	private AltinnEventTypes() {
+	}
 }

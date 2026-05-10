@@ -14,15 +14,18 @@
 	<version>1.0-SNAPSHOT</version>
 
 	<modules>
+		<module>altinn-schemas</module>
 		<module>app</module>
 	</modules>
 
 	<properties>
 		<java.version>25</java.version>
 		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
+		<swagger-annotations.version>2.2.25</swagger-annotations.version>
 
 		<!-- plugins -->
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
+		<openapi-generator-maven-plugin.version>7.10.0</openapi-generator-maven-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -30,6 +33,11 @@
 			<dependency>
 				<groupId>no.nav.dokdigdirhendelser</groupId>
 				<artifactId>app</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.dokdigdirhendelser</groupId>
+				<artifactId>altinn-schemas</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
