@@ -20,6 +20,7 @@
 	<properties>
 		<java.version>25</java.version>
 		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
+		<altinn-schemas.version>4-b236e9f</altinn-schemas.version>
 
 		<!-- plugins -->
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
@@ -33,10 +34,16 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>no.nav.dok-common</groupId>
+				<artifactId>altinn-schemas</artifactId>
+				<version>${altinn-schemas.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>net.logstash.logback</groupId>
 				<artifactId>logstash-logback-encoder</artifactId>
 				<version>${logstash-logback-encoder.version}</version>
 			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

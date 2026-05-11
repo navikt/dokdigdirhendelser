@@ -1,5 +1,7 @@
 package no.nav.dokdigdirhendelser.altinn;
 
+import no.altinn.event.domain.CloudEvent;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -21,8 +23,8 @@ public final class AltinnEventTestData {
 	private AltinnEventTestData() {
 	}
 
-	public static AltinnEvent createValidAltinnEvent(String specVersion) {
-		return AltinnEvent.builder()
+	public static CloudEvent createValidAltinnEvent(String specVersion) {
+		return CloudEvent.builder()
 				.id(EVENT_ID)
 				.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
 				.time(TIME)
@@ -33,7 +35,7 @@ public final class AltinnEventTestData {
 				.build();
 	}
 
-	public static AltinnEvent createValidAltinnEvent() {
+	public static CloudEvent createValidAltinnEvent() {
 		return createValidAltinnEvent(VERSION);
 	}
 }

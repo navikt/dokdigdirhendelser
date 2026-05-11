@@ -1,5 +1,6 @@
 package no.nav.dokdigdirhendelser.altinn;
 
+import no.altinn.event.domain.CloudEvent;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.Test;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -15,14 +16,14 @@ import static org.mockito.Mockito.when;
 class AltinnMeldingHendelseKafkaFailureIT extends AbstractIT {
 
 	@MockitoBean
-	private KafkaTemplate<String, AltinnEvent> kafkaTemplate;
+	private KafkaTemplate<String, CloudEvent> kafkaTemplate;
 
 	@Test
 	void shouldReturnInternalServerErrorWhenKafkaPublishFails() {
-		CompletableFuture<SendResult<String, AltinnEvent>> failedFuture = new CompletableFuture<>();
+		CompletableFuture<SendResult<String, CloudEvent>> failedFuture = new CompletableFuture<>();
 		failedFuture.completeExceptionally(new RuntimeException("Kafka broker unavailable"));
 
-		when(kafkaTemplate.send(ArgumentMatchers.<ProducerRecord<String, AltinnEvent>>any())).thenReturn(failedFuture);
+		when(kafkaTemplate.send(ArgumentMatchers.<ProducerRecord<String, CloudEvent>>any())).thenReturn(failedFuture);
 
 		restTestClient.post()
 				.uri(WEBHOOK_PATH)
