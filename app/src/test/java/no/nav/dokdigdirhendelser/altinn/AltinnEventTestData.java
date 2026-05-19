@@ -1,7 +1,13 @@
 package no.nav.dokdigdirhendelser.altinn;
 
+import no.altinn.event.domain.CloudEvent;
+import no.altinn.event.domain.CloudEventAttribute;
+import no.altinn.event.domain.CloudEventAttributeType;
+
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static no.nav.dokdigdirhendelser.config.DokDigdirHendelserConstant.ALTINN_EVENTS_RESOURCE;
@@ -21,19 +27,84 @@ public final class AltinnEventTestData {
 	private AltinnEventTestData() {
 	}
 
-	public static AltinnEvent createValidAltinnEvent(String specVersion) {
-		return AltinnEvent.builder()
-				.id(EVENT_ID)
-				.type(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ)
-				.time(TIME)
-				.resource(ALTINN_EVENTS_RESOURCE)
-				.resourceinstance(RESOURCE_INSTANCE)
-				.source(EVENT_SOURCE)
-				.specversion(specVersion)
-				.build();
+	/**
+	 * Creates a valid CloudEvent JSON string in the flat CloudEvents wire format (extensions as top-level properties).
+	 * This matches what Altinn actually sends.
+	 */
+	public static String createValidCloudEventJson(String specVersion) {
+		return """
+				{
+					"id": "%s",
+					"source": "%s",
+					"type": "%s",
+					"time": "%s",
+					"resource": "%s",
+					"resourceinstance": "%s",
+					"specversion": "%s"
+				}
+				""".formatted(
+				EVENT_ID,
+				EVENT_SOURCE,
+				EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ,
+				TIME,
+				ALTINN_EVENTS_RESOURCE,
+				RESOURCE_INSTANCE.toString().toLowerCase(),
+				specVersion
+		);
 	}
 
-	public static AltinnEvent createValidAltinnEvent() {
-		return createValidAltinnEvent(VERSION);
+	public static String createValidCloudEventJson() {
+		return createValidCloudEventJson(VERSION);
+	}
+
+	/**
+	 * Builds a CloudEvent JSON string with custom values for parameterized tests.
+	 */
+	public static String buildCloudEventJson(String type, String resource, String resourceinstance, String specversion) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		sb.append("\"id\": \"%s\",".formatted(EVENT_ID));
+		sb.append("\"source\": \"%s\",".formatted(EVENT_SOURCE));
+		sb.append("\"type\": \"%s\",".formatted(type));
+		sb.append("\"time\": \"%s\",".formatted(TIME));
+		sb.append("\"resource\": \"%s\",".formatted(resource));
+		if (resourceinstance != null) {
+			sb.append("\"resourceinstance\": \"%s\",".formatted(resourceinstance));
+		}
+		sb.append("\"specversion\": \"%s\"".formatted(specversion));
+		sb.append("}");
+		return sb.toString();
+	}
+
+	public static CloudEvent createValidCloudEvent(String specVersion) {
+		CloudEvent cloudEvent = new CloudEvent();
+		cloudEvent.setId(EVENT_ID.toString());
+		cloudEvent.setType(EVENT_TYPE_CORRESPONDENCE_RECEIVER_READ);
+		cloudEvent.setTime(TIME);
+		cloudEvent.setSource(EVENT_SOURCE);
+
+		List<CloudEventAttribute> extensions = new ArrayList<>();
+		extensions.add(createExtension("resource", ALTINN_EVENTS_RESOURCE));
+		extensions.add(createExtension("resourceinstance", RESOURCE_INSTANCE.toString()));
+		extensions.add(createExtension("specversion", specVersion));
+		cloudEvent.setExtensionAttributes(extensions);
+
+		return cloudEvent;
+	}
+
+	public static CloudEvent createValidCloudEvent() {
+		return createValidCloudEvent(VERSION);
+	}
+
+	public static CloudEventAttribute createExtension(String name, String value) {
+		CloudEventAttributeType type = new CloudEventAttributeType();
+		type.setName(value);
+
+		CloudEventAttribute attr = new CloudEventAttribute();
+		attr.setName(name);
+		attr.setType(type);
+		attr.setIsExtension(true);
+		attr.setIsRequired(false);
+		return attr;
 	}
 }

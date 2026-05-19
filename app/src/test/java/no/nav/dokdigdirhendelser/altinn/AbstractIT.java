@@ -1,5 +1,6 @@
 package no.nav.dokdigdirhendelser.altinn;
 
+import no.altinn.event.domain.CloudEvent;
 import no.nav.dokdigdirhendelser.Application;
 import no.nav.dokdigdirhendelser.config.DokDigdirHendelserProperties;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -59,22 +60,23 @@ public class AbstractIT {
 				.build();
 	}
 
-	protected Consumer<String, AltinnEvent> setupKafkaConsumer() {
+	protected Consumer<String, CloudEvent> setupKafkaConsumer() {
 		Map<String, Object> consumerProps = KafkaTestUtils.consumerProps(embeddedKafkaBroker, "itest-group", true);
 		consumerProps.put(KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
 		consumerProps.put(VALUE_DESERIALIZER_CLASS_CONFIG, JacksonJsonDeserializer.class.getName());
-		consumerProps.put(JacksonJsonDeserializer.VALUE_DEFAULT_TYPE, AltinnEvent.class.getName());
 
 		consumerProps.put(GROUP_INSTANCE_ID_CONFIG, "itest-group-instance");
 
-		var consumer = new DefaultKafkaConsumerFactory<String, AltinnEvent>(consumerProps).createConsumer();
+		var deserializer = new JacksonJsonDeserializer<>(CloudEvent.class, jsonMapper);
+		var consumer = new DefaultKafkaConsumerFactory<>(consumerProps,
+				new org.apache.kafka.common.serialization.StringDeserializer(), deserializer).createConsumer();
 		consumer.subscribe(singletonList(PRIVAT_ALTINN_MELDING_TOPIC));
 		return consumer;
 	}
 
-	protected AltinnEvent readFromAltinnEventsTopic() {
+	protected CloudEvent readFromAltinnEventsTopic() {
 		try (var consumer = setupKafkaConsumer()) {
-			ConsumerRecord<String, AltinnEvent> singleRecord = KafkaTestUtils.getSingleRecord(consumer, PRIVAT_ALTINN_MELDING_TOPIC, ofSeconds(5));
+			ConsumerRecord<String, CloudEvent> singleRecord = KafkaTestUtils.getSingleRecord(consumer, PRIVAT_ALTINN_MELDING_TOPIC, ofSeconds(5));
 			assertThat(singleRecord).withFailMessage("Record fra topic er null").isNotNull();
 			return singleRecord.value();
 		} catch (IllegalStateException _) {

@@ -19,6 +19,7 @@
 
 	<properties>
 		<java.version>25</java.version>
+		<altinn-schemas.version>8-3339c49</altinn-schemas.version>
 		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
 
 		<!-- plugins -->
@@ -31,6 +32,11 @@
 				<groupId>no.nav.dokdigdirhendelser</groupId>
 				<artifactId>app</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.dok-common</groupId>
+				<artifactId>altinn-schemas</artifactId>
+				<version>${altinn-schemas.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.logstash.logback</groupId>
