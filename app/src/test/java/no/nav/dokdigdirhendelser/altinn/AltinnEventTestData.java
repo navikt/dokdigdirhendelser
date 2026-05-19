@@ -3,6 +3,7 @@ package no.nav.dokdigdirhendelser.altinn;
 import no.altinn.event.domain.CloudEvent;
 import no.altinn.event.domain.CloudEventAttribute;
 import no.altinn.event.domain.CloudEventAttributeType;
+import no.altinn.event.domain.CloudEventsSpecVersion;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -83,10 +84,13 @@ public final class AltinnEventTestData {
 		cloudEvent.setTime(TIME);
 		cloudEvent.setSource(EVENT_SOURCE);
 
+		CloudEventsSpecVersion cloudEventsSpecVersion = new CloudEventsSpecVersion();
+		cloudEventsSpecVersion.setVersionId(specVersion);
+		cloudEvent.setSpecVersion(cloudEventsSpecVersion);
+
 		List<CloudEventAttribute> extensions = new ArrayList<>();
 		extensions.add(createExtension("resource", ALTINN_EVENTS_RESOURCE));
 		extensions.add(createExtension("resourceinstance", RESOURCE_INSTANCE.toString()));
-		extensions.add(createExtension("specversion", specVersion));
 		cloudEvent.setExtensionAttributes(extensions);
 
 		return cloudEvent;

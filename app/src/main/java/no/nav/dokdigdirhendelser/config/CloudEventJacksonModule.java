@@ -3,6 +3,7 @@ package no.nav.dokdigdirhendelser.config;
 import no.altinn.event.domain.CloudEvent;
 import no.altinn.event.domain.CloudEventAttribute;
 import no.altinn.event.domain.CloudEventAttributeType;
+import no.altinn.event.domain.CloudEventsSpecVersion;
 import org.springframework.boot.jackson.JacksonComponent;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonParser;
@@ -19,24 +20,35 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * Custom Jackson serializer/deserializer for CloudEvent that handles Altinn extension attributes
- * (resource, resourceinstance, alternativesubject, specversion) per the CloudEvents specification.
- * Extension attributes in CloudEvents JSON format are top-level properties alongside standard attributes.
+ * (resource, resourceinstance, alternativesubject) per the CloudEvents specification.
  * They are stored in the extensionAttributes list as CloudEventAttribute objects where:
  * - name = the extension attribute key
  * - type.name = the extension attribute value
  * - isExtension = true
+ *
  */
 @JacksonComponent
 public class CloudEventJacksonModule {
 
+	private static final String ID = "id";
+	private static final String SOURCE = "source";
+	private static final String TYPE = "type";
+	private static final String TIME = "time";
+	private static final String SUBJECT = "subject";
+	private static final String DATA = "data";
+	private static final String DATA_CONTENT_TYPE = "datacontenttype";
+	private static final String DATA_SCHEMA = "dataschema";
+	private static final String SPEC_VERSION = "specversion";
+
 	private static final Set<String> STANDARD_ATTRIBUTES = Set.of(
-			"id", "source", "type", "time", "subject", "data",
-			"datacontenttype", "dataschema", "specversion",
-			"extensionAttributes", "isValid", "specVersion", "dataContentType"
+			ID, SOURCE, TYPE, TIME, SUBJECT, DATA,
+			DATA_CONTENT_TYPE, DATA_SCHEMA, SPEC_VERSION,
+			"extensionAttributes", "isValid", "dataContentType"
 	);
 
 	public static class Serializer extends StdSerializer<CloudEvent> {
@@ -48,39 +60,40 @@ public class CloudEventJacksonModule {
 		@Override
 		public void serialize(CloudEvent cloudEvent, JsonGenerator gen, SerializationContext ctxt) {
 			gen.writeStartObject();
+			writeStandardAttributes(cloudEvent, gen);
+			writeExtensionAttributes(cloudEvent, gen);
+			gen.writeEndObject();
+		}
 
-			if (cloudEvent.getId() != null) {
-				gen.writeStringProperty("id", cloudEvent.getId());
-			}
-			if (cloudEvent.getSource() != null) {
-				gen.writeStringProperty("source", cloudEvent.getSource().toString());
-			}
-			if (cloudEvent.getType() != null) {
-				gen.writeStringProperty("type", cloudEvent.getType());
-			}
-			if (cloudEvent.getTime() != null) {
-				gen.writeStringProperty("time", cloudEvent.getTime().toString());
-			}
-			if (cloudEvent.getSubject() != null) {
-				gen.writeStringProperty("subject", cloudEvent.getSubject());
-			}
-			if (cloudEvent.getDataContentType() != null) {
-				gen.writeStringProperty("datacontenttype", cloudEvent.getDataContentType());
-			}
-			if (cloudEvent.getDataSchema() != null) {
-				gen.writeStringProperty("dataschema", cloudEvent.getDataSchema().toString());
-			}
+		private void writeStandardAttributes(CloudEvent cloudEvent, JsonGenerator gen) {
+			writeIfPresent(gen, ID, cloudEvent.getId());
+			writeIfPresent(gen, SOURCE, Objects.toString(cloudEvent.getSource(), null));
+			writeIfPresent(gen, TYPE, cloudEvent.getType());
+			writeIfPresent(gen, TIME, Objects.toString(cloudEvent.getTime(), null));
+			writeIfPresent(gen, SUBJECT, cloudEvent.getSubject());
+			writeIfPresent(gen, DATA_CONTENT_TYPE, cloudEvent.getDataContentType());
+			writeIfPresent(gen, DATA_SCHEMA, Objects.toString(cloudEvent.getDataSchema(), null));
 
-			// Write extension attributes as top-level properties per CloudEvents JSON spec
-			if (cloudEvent.getExtensionAttributes() != null) {
-				for (CloudEventAttribute attr : cloudEvent.getExtensionAttributes()) {
-					if (attr.getName() != null && attr.getType() != null && attr.getType().getName() != null) {
-						gen.writeStringProperty(attr.getName(), attr.getType().getName());
-					}
+			if (cloudEvent.getSpecVersion() != null && cloudEvent.getSpecVersion().getVersionId() != null) {
+				gen.writeStringProperty(SPEC_VERSION, cloudEvent.getSpecVersion().getVersionId());
+			}
+		}
+
+		private void writeExtensionAttributes(CloudEvent cloudEvent, JsonGenerator gen) {
+			if (cloudEvent.getExtensionAttributes() == null) {
+				return;
+			}
+			for (CloudEventAttribute attr : cloudEvent.getExtensionAttributes()) {
+				if (attr.getName() != null && attr.getType() != null && attr.getType().getName() != null) {
+					gen.writeStringProperty(attr.getName(), attr.getType().getName());
 				}
 			}
+		}
 
-			gen.writeEndObject();
+		private void writeIfPresent(JsonGenerator gen, String field, String value) {
+			if (value != null) {
+				gen.writeStringProperty(field, value);
+			}
 		}
 	}
 
@@ -95,14 +108,31 @@ public class CloudEventJacksonModule {
 			ObjectNode node = p.readValueAsTree();
 
 			CloudEvent cloudEvent = new CloudEvent();
-			cloudEvent.setId(textOrNull(node, "id"));
-			cloudEvent.setSource(uriOrNull(node, "source"));
-			cloudEvent.setType(textOrNull(node, "type"));
-			cloudEvent.setTime(offsetDateTimeOrNull(node, "time"));
-			cloudEvent.setSubject(textOrNull(node, "subject"));
-			cloudEvent.setDataContentType(textOrNull(node, "datacontenttype"));
-			cloudEvent.setDataSchema(uriOrNull(node, "dataschema"));
+			deserializeStandardAttributes(node, cloudEvent);
+			deserializeSpecVersion(node, cloudEvent);
+			cloudEvent.setExtensionAttributes(deserializeExtensionAttributes(node));
+			return cloudEvent;
+		}
 
+		private void deserializeStandardAttributes(ObjectNode node, CloudEvent cloudEvent) {
+			cloudEvent.setId(textOrNull(node, ID));
+			cloudEvent.setSource(uriOrNull(node, SOURCE));
+			cloudEvent.setType(textOrNull(node, TYPE));
+			cloudEvent.setTime(offsetDateTimeOrNull(node, TIME));
+			cloudEvent.setSubject(textOrNull(node, SUBJECT));
+			cloudEvent.setDataContentType(textOrNull(node, DATA_CONTENT_TYPE));
+			cloudEvent.setDataSchema(uriOrNull(node, DATA_SCHEMA));
+		}
+
+		private void deserializeSpecVersion(ObjectNode node, CloudEvent cloudEvent) {
+			if (node.has(SPEC_VERSION)) {
+				CloudEventsSpecVersion specVersion = new CloudEventsSpecVersion();
+				specVersion.setVersionId(node.get(SPEC_VERSION).asString());
+				cloudEvent.setSpecVersion(specVersion);
+			}
+		}
+
+		private List<CloudEventAttribute> deserializeExtensionAttributes(ObjectNode node) {
 			List<CloudEventAttribute> extensionAttributes = new ArrayList<>();
 
 			Iterator<Map.Entry<String, JsonNode>> fields = node.properties().iterator();
@@ -110,18 +140,11 @@ public class CloudEventJacksonModule {
 				Map.Entry<String, JsonNode> field = fields.next();
 				String fieldName = field.getKey();
 				if (!STANDARD_ATTRIBUTES.contains(fieldName) && field.getValue().isValueNode()) {
-					String value = field.getValue().isNull() ? null : field.getValue().asText();
+					String value = field.getValue().isNull() ? null : field.getValue().asString();
 					extensionAttributes.add(createExtensionAttribute(fieldName, value));
 				}
 			}
-
-			// Also store specversion as an extension for validation access
-			if (node.has("specversion")) {
-				extensionAttributes.add(createExtensionAttribute("specversion", node.get("specversion").asText()));
-			}
-
-			cloudEvent.setExtensionAttributes(extensionAttributes);
-			return cloudEvent;
+			return extensionAttributes;
 		}
 
 		private CloudEventAttribute createExtensionAttribute(String name, String value) {
@@ -137,7 +160,7 @@ public class CloudEventJacksonModule {
 		}
 
 		private String textOrNull(ObjectNode node, String field) {
-			return node.has(field) && !node.get(field).isNull() ? node.get(field).asText() : null;
+			return node.has(field) && !node.get(field).isNull() ? node.get(field).asString() : null;
 		}
 
 		private URI uriOrNull(ObjectNode node, String field) {

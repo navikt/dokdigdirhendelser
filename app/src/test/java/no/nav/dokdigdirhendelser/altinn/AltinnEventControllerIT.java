@@ -77,7 +77,7 @@ class AltinnEventControllerIT extends AbstractIT {
 		assertThat(getExtension(cloudEventReadFromTopic, "resource")).isEqualTo(ALTINN_EVENTS_RESOURCE);
 		assertThat(getExtension(cloudEventReadFromTopic, "resourceinstance")).isEqualTo(RESOURCE_INSTANCE.toString().toLowerCase());
 		assertThat(cloudEventReadFromTopic.getSource()).isEqualTo(EVENT_SOURCE);
-		assertThat(getExtension(cloudEventReadFromTopic, "specversion")).isEqualTo(VERSION);
+		assertThat(cloudEventReadFromTopic.getSpecVersion().getVersionId()).isEqualTo(VERSION);
 	}
 
 	@ParameterizedTest

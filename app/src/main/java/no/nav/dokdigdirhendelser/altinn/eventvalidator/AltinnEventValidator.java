@@ -28,7 +28,7 @@ public class AltinnEventValidator {
 			throw new HendelseTypeBehandlesIkkeException("hendelse type=%s behandles ikke".formatted(sanitize(cloudEvent.getType())));
 		}
 
-		String specversion = getExtension(cloudEvent, "specversion");
+		String specversion = cloudEvent.getSpecVersion() != null ? cloudEvent.getSpecVersion().getVersionId() : null;
 		if (!SPEC_VERSION.equals(specversion)) {
 			throw new DokDigdirHendelserTechnicalException("Ugyldig verdi: specversion må være 1.0");
 		}
