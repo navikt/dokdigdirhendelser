@@ -32,8 +32,6 @@ public class AltinnEventsController {
 	@PostMapping
 	public ResponseEntity<String> mottakAltinnMelding(@RequestBody CloudEvent cloudEvent,
 													  @RequestParam("code") String code) {
-		log.info("Mottar Altinn hendelse cloudEvent: {}", cloudEvent);
-
 		if(!altinnWebhookCode.equals(code)) {
 			log.error("Mottatt altinn hendelse behandles ikke, code matcher ikke");
 			return ResponseEntity.ok().build();
