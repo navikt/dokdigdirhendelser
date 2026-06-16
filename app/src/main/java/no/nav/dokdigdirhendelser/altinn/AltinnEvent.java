@@ -25,7 +25,6 @@ public record AltinnEvent(
 			"no.altinn.correspondence.correspondencereceiverread",
 			"no.altinn.correspondence.correspondencereceiverconfirmed",
 			"no.altinn.correspondence.correspondencenotificationcreationfailed",
-			"no.altinn.correspondence.correspondencenotificationfailed",
 			"no.altinn.correspondence.correspondencenotificationallfailed",
 			"no.altinn.correspondence.correspondencepublished"
 	);
