@@ -23,7 +23,7 @@ public class AltinnEventValidator {
 		}
 
 		if (!CORRESPONDENCE_EVENT_TYPES.contains(altinnEvent.type())) {
-			throw new HendelseTypeBehandlesIkkeException("hendelse type=%s behandles ikke".formatted(sanitize(altinnEvent.type())));
+			throw new HendelseTypeBehandlesIkkeException("Hendelsestype=%s behandles ikke".formatted(sanitize(altinnEvent.type())));
 		}
 
 		if (!SPEC_VERSION.equals(altinnEvent.specversion())) {
