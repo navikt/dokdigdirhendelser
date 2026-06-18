@@ -1,5 +1,6 @@
 package no.nav.dokdigdirhendelser.altinn;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.dokdigdirhendelser.config.AltinnWebhookProperties;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class AltinnEventsController {
 	}
 
 	@PostMapping
-	public ResponseEntity<String> mottakAltinnMelding(@RequestBody AltinnEvent altinnEvent,
+	public ResponseEntity<String> mottakAltinnMelding(@RequestBody @Valid AltinnEvent altinnEvent,
 													  @RequestParam("code") String code) {
 		if (!altinnWebhookCode.equals(code)) {
 			log.error("Mottatt altinn hendelse behandles ikke, code matcher ikke");

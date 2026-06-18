@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -93,6 +95,46 @@ class AltinnEventControllerIT extends AbstractIT {
 		assertTopicIsEmpty();
 	}
 
+	@ParameterizedTest
+	@ValueSource(strings = {"\"\"", "\" \""})
+	@NullSource
+	void shouldReturnOkWithBodyWhenIdIsNullOrEmpty(String id) {
+		var body = """
+				{
+				  "id": %s
+				}
+				""";
+
+		var response = restTestClient.post()
+				.uri(WEBHOOK_PATH)
+				.contentType(APPLICATION_JSON)
+				.body(body.formatted(id))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class)
+				.returnResult()
+				.getResponseBody();
+
+		assertThat(response).isEqualTo("id: must not be null");
+		assertTopicIsEmpty();
+	}
+
+	@Test
+	void shouldReturnOkWithBodyWhenIdIsMissing() {
+		var response = restTestClient.post()
+				.uri(WEBHOOK_PATH)
+				.contentType(APPLICATION_JSON)
+				.body(Map.of("resource", ALTINN_EVENTS_RESOURCE))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class)
+				.returnResult()
+				.getResponseBody();
+
+		assertThat(response).isEqualTo("id: must not be null");
+		assertTopicIsEmpty();
+	}
+
 	@Test
 	void shouldReturnBadRequestWhenRequestContainsUnknownFields() {
 		restTestClient.post()
@@ -106,7 +148,7 @@ class AltinnEventControllerIT extends AbstractIT {
 	}
 
 	@Test
-	void shoudThrowInternalServerErrorWhenSpecversionAreInvalid() {
+	void shouldThrowInternalServerErrorWhenSpecversionIsInvalid() {
 		AltinnEvent altinnEvent = createValidAltinnEvent(INVALID_VERSION);
 
 		var response = restTestClient.post()
