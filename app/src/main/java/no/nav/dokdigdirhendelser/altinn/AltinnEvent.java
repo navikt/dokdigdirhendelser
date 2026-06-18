@@ -1,5 +1,6 @@
 package no.nav.dokdigdirhendelser.altinn;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import org.springframework.validation.annotation.Validated;
@@ -14,10 +15,12 @@ import java.util.UUID;
 public record AltinnEvent(
 		@NotNull
 		UUID id,
+		@NotBlank
 		String resource,
 		UUID resourceinstance,
 		URI source,
 		String specversion,
+		@NotBlank
 		String type,
 		String subject,
 		String alternativesubject,
