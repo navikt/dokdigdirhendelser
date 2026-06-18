@@ -1,6 +1,8 @@
 package no.nav.dokdigdirhendelser.altinn;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import org.springframework.validation.annotation.Validated;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -8,7 +10,9 @@ import java.util.Set;
 import java.util.UUID;
 
 @Builder
+@Validated
 public record AltinnEvent(
+		@NotNull
 		UUID id,
 		String resource,
 		UUID resourceinstance,

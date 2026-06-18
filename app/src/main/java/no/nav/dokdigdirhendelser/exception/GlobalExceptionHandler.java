@@ -3,8 +3,8 @@ package no.nav.dokdigdirhendelser.exception;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,28 +21,26 @@ import static org.springframework.http.HttpStatus.OK;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ResponseStatus(OK)
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public void handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-		String errors = ex.getBindingResult()
-				.getFieldErrors()
-				.stream()
-				.collect(Collectors.toMap(
-						FieldError::getField,
-						error -> error.getDefaultMessage() != null ? error.getDefaultMessage() : "Ugyldig verdi",
-						(existing, _) -> existing
-				)).values().stream().findFirst().orElse("");
+	private static final String AVBRYTER_BEHANDLING_MED_FEILMELDING = "Avbryter behandling av hendelse med feilmelding: %s";
 
-		log.error(errors);
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		String feil = ex.getBindingResult().getFieldErrors().stream()
+				.map(error -> error.getField() + ": " + (error.getDefaultMessage() != null ? error.getDefaultMessage() : "Ugyldig verdi"))
+				.collect(Collectors.joining(", "));
+
+		log.error(AVBRYTER_BEHANDLING_MED_FEILMELDING.formatted(feil), ex);
+
+		return ResponseEntity.ok(feil);
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public void handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletResponse response) {
 		if (ex.getCause() instanceof UnrecognizedPropertyException) {
-			log.error("Behandling av melding avbrutt pga ukjent felt.", ex);
+			log.error(AVBRYTER_BEHANDLING_MED_FEILMELDING.formatted("Hendelse innehold ukjent felt."), ex);
 			response.setStatus(BAD_REQUEST.value());
 		} else {
-			log.error("Behandling av melding avbrutt: kunne ikke lese JSON-innhold.", ex);
+			log.error(AVBRYTER_BEHANDLING_MED_FEILMELDING.formatted("Kunne ikke lese JSON-innhold."), ex);
 			response.setStatus(OK.value());
 		}
 	}
@@ -61,10 +59,10 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler({DokDigdirHendelserTechnicalException.class, Exception.class})
 	public ProblemDetail handleGenericException(Exception ex) {
-		log.error("Feilet teknisk:{}", ex.getMessage(), ex);
+		log.error("Teknisk feil med feilmelding:{}", ex.getMessage(), ex);
 		return ProblemDetail.forStatusAndDetail(
 				INTERNAL_SERVER_ERROR,
-				"Feilet teknisk: " + ex.getMessage()
+				"Teknisk feil med feilmelding: " + ex.getMessage()
 		);
 	}
 }
