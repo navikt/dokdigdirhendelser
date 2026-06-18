@@ -99,16 +99,24 @@ class AltinnEventControllerIT extends AbstractIT {
 	@ValueSource(strings = {"\"\"", "\" \""})
 	@NullSource
 	void shouldReturnOkWithBodyWhenIdIsNullOrEmpty(String id) {
-		var body = """
+		var event = """
 				{
-				  "id": %s
+				   "id": %s,
+				   "resource": "urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost",
+				   "resourceinstance": "65d04253-6758-4573-84bb-594129dd34ee",
+				   "source": "https://platform.tt02.altinn.no/correspondence/api/v1/correspondence",
+				   "specversion": "1.0",
+				   "type": "no.altinn.correspondence.correspondencepublished",
+				   "subject": "urn:altinn:organization:identifier-no:889640782",
+				   "alternativesubject": "/organisation/889640782",
+				   "time": "2024-04-19T07:22:19.438039Z"
 				}
 				""";
 
 		var response = restTestClient.post()
 				.uri(WEBHOOK_PATH)
 				.contentType(APPLICATION_JSON)
-				.body(body.formatted(id))
+				.body(event.formatted(id))
 				.exchange()
 				.expectStatus().isOk()
 				.expectBody(String.class)
@@ -121,10 +129,23 @@ class AltinnEventControllerIT extends AbstractIT {
 
 	@Test
 	void shouldReturnOkWithBodyWhenIdIsMissing() {
+		var event = """
+				{
+				   "resource": "urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost",
+				   "resourceinstance": "65d04253-6758-4573-84bb-594129dd34ee",
+				   "source": "https://platform.tt02.altinn.no/correspondence/api/v1/correspondence",
+				   "specversion": "1.0",
+				   "type": "no.altinn.correspondence.correspondencepublished",
+				   "subject": "urn:altinn:organization:identifier-no:889640782",
+				   "alternativesubject": "/organisation/889640782",
+				   "time": "2024-04-19T07:22:19.438039Z"
+				}
+				""";
+
 		var response = restTestClient.post()
 				.uri(WEBHOOK_PATH)
 				.contentType(APPLICATION_JSON)
-				.body(Map.of("resource", ALTINN_EVENTS_RESOURCE))
+				.body(event)
 				.exchange()
 				.expectStatus().isOk()
 				.expectBody(String.class)
@@ -132,6 +153,158 @@ class AltinnEventControllerIT extends AbstractIT {
 				.getResponseBody();
 
 		assertThat(response).isEqualTo("id: must not be null");
+		assertTopicIsEmpty();
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"\"\"", "\" \""})
+	@NullSource
+	void shouldReturnOkWithBodyWhenResourceIsNullOrEmpty(String resource) {
+		var event = """
+				{
+				   "id": "aa992206-a705-4c27-ba99-409f2f472c24",
+				   "resource": %s,
+				   "resourceinstance": "65d04253-6758-4573-84bb-594129dd34ee",
+				   "source": "https://platform.tt02.altinn.no/correspondence/api/v1/correspondence",
+				   "specversion": "1.0",
+				   "type": "no.altinn.correspondence.correspondencepublished",
+				   "subject": "urn:altinn:organization:identifier-no:889640782",
+				   "alternativesubject": "/organisation/889640782",
+				   "time": "2024-04-19T07:22:19.438039Z"
+				}
+				""";
+
+		var response = restTestClient.post()
+				.uri(WEBHOOK_PATH)
+				.contentType(APPLICATION_JSON)
+				.body(event.formatted(resource))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class)
+				.returnResult()
+				.getResponseBody();
+
+		assertThat(response).isEqualTo("resource: must not be blank");
+		assertTopicIsEmpty();
+	}
+
+	@Test
+	void shouldReturnOkWithBodyWhenResourceIsMissing() {
+		var event = """
+				{
+				   "id": "aa992206-a705-4c27-ba99-409f2f472c24",
+				   "resourceinstance": "65d04253-6758-4573-84bb-594129dd34ee",
+				   "source": "https://platform.tt02.altinn.no/correspondence/api/v1/correspondence",
+				   "specversion": "1.0",
+				   "type": "no.altinn.correspondence.correspondencepublished",
+				   "subject": "urn:altinn:organization:identifier-no:889640782",
+				   "alternativesubject": "/organisation/889640782",
+				   "time": "2024-04-19T07:22:19.438039Z"
+				}
+				""";
+
+		var response = restTestClient.post()
+				.uri(WEBHOOK_PATH)
+				.contentType(APPLICATION_JSON)
+				.body(event)
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class)
+				.returnResult()
+				.getResponseBody();
+
+		assertThat(response).isEqualTo("resource: must not be blank");
+		assertTopicIsEmpty();
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"\"\"", "\" \""})
+	@NullSource
+	void shouldReturnOkWithBodyWhenTypeIsNullOrEmpty(String type) {
+		var event = """
+				{
+				   "id": "aa992206-a705-4c27-ba99-409f2f472c24",
+				   "resource": "urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost",
+				   "resourceinstance": "65d04253-6758-4573-84bb-594129dd34ee",
+				   "source": "https://platform.tt02.altinn.no/correspondence/api/v1/correspondence",
+				   "specversion": "1.0",
+				   "type": %s,
+				   "subject": "urn:altinn:organization:identifier-no:889640782",
+				   "alternativesubject": "/organisation/889640782",
+				   "time": "2024-04-19T07:22:19.438039Z"
+				}
+				""";
+
+		var response = restTestClient.post()
+				.uri(WEBHOOK_PATH)
+				.contentType(APPLICATION_JSON)
+				.body(event.formatted(type))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class)
+				.returnResult()
+				.getResponseBody();
+
+		assertThat(response).isEqualTo("type: must not be blank");
+		assertTopicIsEmpty();
+	}
+
+	@Test
+	void shouldReturnOkWithBodyWhenTypeIsMissing() {
+		var event = """
+				{
+				   "id": "aa992206-a705-4c27-ba99-409f2f472c24",
+				   "resource": "urn:altinn:resource:nav_dokumentdistribusjon_taushetsbelagtpost",
+				   "resourceinstance": "65d04253-6758-4573-84bb-594129dd34ee",
+				   "source": "https://platform.tt02.altinn.no/correspondence/api/v1/correspondence",
+				   "specversion": "1.0",
+				   "subject": "urn:altinn:organization:identifier-no:889640782",
+				   "alternativesubject": "/organisation/889640782",
+				   "time": "2024-04-19T07:22:19.438039Z"
+				}
+				""";
+
+		var response = restTestClient.post()
+				.uri(WEBHOOK_PATH)
+				.contentType(APPLICATION_JSON)
+				.body(event)
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class)
+				.returnResult()
+				.getResponseBody();
+
+		assertThat(response).isEqualTo("type: must not be blank");
+		assertTopicIsEmpty();
+	}
+
+	@Test
+	void shouldReturnOkWithBodyWhenMultipleFieldsAreBlank() {
+		var event = """
+				{
+				   "id": null,
+				   "resource": "",
+				   "resourceinstance": "65d04253-6758-4573-84bb-594129dd34ee",
+				   "source": "https://platform.tt02.altinn.no/correspondence/api/v1/correspondence",
+				   "specversion": "1.0",
+				   "type": "no.altinn.correspondence.correspondencepublished",
+				   "subject": "urn:altinn:organization:identifier-no:889640782",
+				   "alternativesubject": "/organisation/889640782",
+				   "time": "2024-04-19T07:22:19.438039Z"
+				}
+				""";
+
+		var response = restTestClient.post()
+				.uri(WEBHOOK_PATH)
+				.contentType(APPLICATION_JSON)
+				.body(event)
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(String.class)
+				.returnResult()
+				.getResponseBody();
+
+		assertThat(response).contains("id: must not be null", "resource: must not be blank");
 		assertTopicIsEmpty();
 	}
 
