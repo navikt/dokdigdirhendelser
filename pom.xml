@@ -21,6 +21,9 @@
 		<java.version>25</java.version>
 		<logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
 
+		<!-- spring boot 4.1.1 henger bak og gir tomcat en del critical vulns. -->
+		<tomcat.version>11.0.26</tomcat.version>
+
 		<!-- plugins -->
 		<maven-toolchains-plugin.version>3.3.0</maven-toolchains-plugin.version>
 	</properties>
