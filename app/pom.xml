@@ -38,6 +38,21 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-kafka</artifactId>
+			<!-- Vi komprimerer ikke meldinger, ekskluderer komprimeringsbiblioteker -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.xerial.snappy</groupId>
+					<artifactId>snappy-java</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>at.yawk.lz4</groupId>
+					<artifactId>lz4-java</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.github.luben</groupId>
+					<artifactId>zstd-jni</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -61,6 +76,21 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-kafka-test</artifactId>
 			<scope>test</scope>
+			<!-- Vi komprimerer ikke meldinger, ekskluderer komprimeringsbiblioteker -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.xerial.snappy</groupId>
+					<artifactId>snappy-java</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>at.yawk.lz4</groupId>
+					<artifactId>lz4-java</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.github.luben</groupId>
+					<artifactId>zstd-jni</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
